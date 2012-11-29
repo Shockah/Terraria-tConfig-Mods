@@ -41,7 +41,7 @@ public class FactoryGen {
 		baseY -= rooms[0].h+rooms[0].y;
 		
 		int zeroX, zeroY;
-		FactoryRoom[,] map = ListToArray(rooms,zeroX,zeroY);
+		FactoryRoom[,] map = ListToArray(rooms,out zeroX,out zeroY);
 		
 		//TODO
 	}

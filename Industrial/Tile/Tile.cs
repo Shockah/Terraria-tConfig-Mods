@@ -1,7 +1,7 @@
 #INCLUDE "FactoryGen.cs"
 
 public void ModifyWorld() {
-	GenerateFactory(Main.maxTilesX/2);
+	if (ModGeneric.enabledFactoryGen) GenerateFactory(Main.maxTilesX/2);
 }
 
 public static void GenerateFactory(int baseX) {
