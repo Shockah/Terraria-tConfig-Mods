@@ -1,0 +1,1 @@
+public static int HealthUpMaxHealth = 1600, HealthUpMaxMana = 800;

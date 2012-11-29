@@ -1,0 +1,1 @@
+public static bool HPBarShowMy = false;
