@@ -2,9 +2,17 @@ private static readonly Vector2[] shadowOffset = {new Vector2(-1,-1),new Vector2
 private static readonly Color[] heartColors = {Color.Red,Color.Orange,Color.Yellow,Color.GreenYellow,Color.Lime,Color.Cyan,Color.RoyalBlue,Color.MediumOrchid,Color.Pink};
 private static readonly Color[] starColors = {Color.Cyan,Color.CornflowerBlue,Color.Blue,Color.DarkViolet,Color.Magenta,Color.HotPink,Color.LightPink};
 
+private static Texture2D texBar, texBar2, texBarBorder, texBarBorder2;
+
 public static void Initialize() {
 	Main.heartTexture = Main.goreTexture[Config.goreID["HealthUpHeart"]];
 	Main.manaTexture = Main.goreTexture[Config.goreID["HealthUpStar"]];
+	if (ModGeneric.HealthUpSAO) {
+		texBar = Main.goreTexture[Config.goreID["SAOBar"]];
+		texBar2 = Main.goreTexture[Config.goreID["SAOBar2"]];
+		texBarBorder = Main.goreTexture[Config.goreID["SAOBarBorder"]];
+		texBarBorder2 = Main.goreTexture[Config.goreID["SAOBarBorder2"]];
+	}
 }
 
 public static bool PreDrawLifeHearts(SpriteBatch sb) {
@@ -12,29 +20,43 @@ public static bool PreDrawLifeHearts(SpriteBatch sb) {
 	if (p == null) return false;
 	if (p.ghost) return false;
 	
+	Texture2D tex = Main.heartTexture, tex2 = Main.goreTexture[Config.goreID["HealthUpHeart2"]];
+	int x = Main.screenWidth-300, y = 41;
+	
 	const int valueHeart = 20;
 	const int heartOffset = 26, heartPerLine = 10, heartLines = 2;
 	
-	Texture2D tex = Main.heartTexture, tex2 = Main.goreTexture[Config.goreID["HealthUpHeart2"]];
-	int x = Main.screenWidth-300+tex.Width/2, y = 30+tex.Height/2;
-	
-	int i = 0;
-	int value = p.statLife;
-	
 	string text = Lang.inter[0]+" "+p.statLife+"/"+p.statLifeMax;
-	DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(x+((Math.Min(heartPerLine,value/20)-1)*heartOffset-Main.fontMouseText.MeasureString(text).X)/2f,6),Color.White,Color.Black,default(Vector2),1f,SpriteEffects.None);
-	
-	while (value != 0) {
-		int value2 = Math.Min(valueHeart,value);
-		value -= value2;
+	if (ModGeneric.HealthUpSAO) {
+		DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(x+260/2-Main.fontMouseText.MeasureString(text).X/2,6),Color.White,Color.Black,default(Vector2),1f,SpriteEffects.None);
 		
-		int xx = i%heartPerLine, yy = i%(heartPerLine*heartLines)/heartPerLine, set = i/(heartPerLine*heartLines);
-		float scale = value == 0 ? Main.cursorScale : 1f;
+		sb.Draw(p.statManaMax2 > 0 ? texBarBorder2 : texBarBorder,new Vector2(x,y),new Rectangle(0,0,texBarBorder.Width,texBarBorder.Height),Color.White);
 		
-		Color c = Alpha(HealthUpGetHealthColor(set),.25f+(.75f*value2/valueHeart));
-		sb.Draw(tex,new Vector2(x+xx*heartOffset,y+yy*heartOffset),new Rectangle?(new Rectangle(0,0,tex.Width,tex.Height)),c,value == 0 ? scale*2f-2.1f : 0f,new Vector2(tex.Width/2,tex.Height/2),c.A/255f,SpriteEffects.None,0f);
-		sb.Draw(tex2,new Vector2(x+xx*heartOffset,y+yy*heartOffset),new Rectangle?(new Rectangle(0,0,tex.Width,tex.Height)),Merge(c,Color.White,.5f,true),value == 0 ? scale*2f-2.1f : 0f,new Vector2(tex.Width/2,tex.Height/2),c.A/255f,SpriteEffects.None,0f);
-		i++;
+		int times = (int)Math.Ceiling(texBar.Height/2f);
+		float percent = p.statLifeMax == 0 ? 0f : 1f*p.statLife/p.statLifeMax;
+		int w = (int)(Math.Floor(texBar.Width/2f*percent)*2);
+		Color c = percent <= .2f ? Color.Red : (percent <= .5f ? Color.Yellow : Color.LawnGreen);
+		for (int i = 0; i < times; i++) {
+			int ww = w-(i/2)*2;
+			if (ww > 0) sb.Draw(texBar,new Vector2(x+4,y+4+i*2),new Rectangle(0,i*2,ww,2),c);
+		}
+	} else {
+		int i = 0;
+		int value = p.statLife;
+		
+		DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(x+((Math.Min(heartPerLine,value/20)-1)*heartOffset-Main.fontMouseText.MeasureString(text).X)/2f,6),Color.White,Color.Black,default(Vector2),1f,SpriteEffects.None);
+		while (value != 0) {
+			int value2 = Math.Min(valueHeart,value);
+			value -= value2;
+			
+			int xx = i%heartPerLine, yy = i%(heartPerLine*heartLines)/heartPerLine, set = i/(heartPerLine*heartLines);
+			float scale = value == 0 ? Main.cursorScale : 1f;
+			
+			Color c = Alpha(HealthUpGetHealthColor(set),.25f+(.75f*value2/valueHeart));
+			sb.Draw(tex,new Vector2(x+xx*heartOffset,y+yy*heartOffset),new Rectangle?(new Rectangle(0,0,tex.Width,tex.Height)),c,value == 0 ? scale*2f-2.1f : 0f,new Vector2(tex.Width/2,tex.Height/2),c.A/255f,SpriteEffects.None,0f);
+			sb.Draw(tex2,new Vector2(x+xx*heartOffset,y+yy*heartOffset),new Rectangle?(new Rectangle(0,0,tex.Width,tex.Height)),Merge(c,Color.White,.5f,true),value == 0 ? scale*2f-2.1f : 0f,new Vector2(tex.Width/2,tex.Height/2),c.A/255f,SpriteEffects.None,0f);
+			i++;
+		}
 	}
 	
 	return false;
@@ -56,23 +78,32 @@ public static bool PreDrawManaStars(SpriteBatch sb) {
 	Texture2D tex = Main.manaTexture, tex2 = Main.goreTexture[Config.goreID["HealthUpStar2"]];
 	int x = Main.screenWidth-25, y = 30+tex.Height/2;
 	
-	int i = 0;
-	int value = p.statMana;
-	
 	string text = Lang.inter[2];
-	DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(Main.screenWidth-50,6),Color.White,Color.Black,default(Vector2),1f,SpriteEffects.None);
-	
-	while (value != 0) {
-		int value2 = Math.Min(valueStar,value);
-		value -= value2;
+	if (ModGeneric.HealthUpSAO) {
+		x = Main.screenWidth-300;
+		y = 41;
 		
-		int yy = i%starPerLine, set = i/starPerLine;
-		float scale = value == 0 ? Main.cursorScale : 1f;
+		int times = (int)Math.Ceiling(texBar2.Height/2f);
+		float percent = 1f*p.statMana/p.statManaMax2;
+		int w = (int)(Math.Floor((texBar2.Width-2)/2f*percent)*2);
+		for (int i = 0; i < times; i++) sb.Draw(texBar2,new Vector2(x+126-(i+1)/2*2,y+18+i*2),new Rectangle(4-(i+1)/2*2,i*2,w,2),Color.White);
+	} else {
+		int i = 0;
+		int value = p.statMana;
 		
-		Color c = Alpha(HealthUpGetManaColor(set),.25f+(.75f*value2/valueStar));
-		sb.Draw(tex,new Vector2(x,y+yy*26),new Rectangle?(new Rectangle(0,0,tex.Width,tex.Height)),c,value == 0 ? scale*2f*1.11f-2.1f*1.11f : 0f,new Vector2(tex.Width/2,tex.Height/2),c.A/255f,SpriteEffects.None,0f);
-		sb.Draw(tex2,new Vector2(x,y+yy*26),new Rectangle?(new Rectangle(0,0,tex.Width,tex.Height)),Merge(c,Color.White,.5f,true),0f,new Vector2(tex.Width/2,tex.Height/2),c.A/255f,SpriteEffects.None,0f);
-		i++;
+		DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(Main.screenWidth-50,6),Color.White,Color.Black,default(Vector2),1f,SpriteEffects.None);
+		while (value != 0) {
+			int value2 = Math.Min(valueStar,value);
+			value -= value2;
+			
+			int yy = i%starPerLine, set = i/starPerLine;
+			float scale = value == 0 ? Main.cursorScale : 1f;
+			
+			Color c = Alpha(HealthUpGetManaColor(set),.25f+(.75f*value2/valueStar));
+			sb.Draw(tex,new Vector2(x,y+yy*26),new Rectangle?(new Rectangle(0,0,tex.Width,tex.Height)),c,value == 0 ? scale*2f*1.11f-2.1f*1.11f : 0f,new Vector2(tex.Width/2,tex.Height/2),c.A/255f,SpriteEffects.None,0f);
+			sb.Draw(tex2,new Vector2(x,y+yy*26),new Rectangle?(new Rectangle(0,0,tex.Width,tex.Height)),Merge(c,Color.White,.5f,true),0f,new Vector2(tex.Width/2,tex.Height/2),c.A/255f,SpriteEffects.None,0f);
+			i++;
+		}
 	}
 	
 	return false;
@@ -114,4 +145,7 @@ public static int ExternalGetMaxHealth() {
 }
 public static int ExternalGetMaxMana() {
 	return ModGeneric.HealthUpMaxMana;
+}
+public static bool ExternalGetSAOBars() {
+	return ModGeneric.HealthUpSAO;
 }
