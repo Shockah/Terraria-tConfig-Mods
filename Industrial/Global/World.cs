@@ -14,7 +14,41 @@ public static void PreDrawInterface(SpriteBatch sb) {
 	
 	y += 24;
 	sb.Draw(texBarBorder,new Vector2(x,y),new Rectangle(0,0,texBarBorder.Width,texBarBorder.Height),Color.White);
+	
+	sb.End();
+	
+	DepthStencilState stMask = new DepthStencilState();
+	stMask.StencilEnable = true;
+	stMask.StencilFunction = CompareFunction.Always;
+	stMask.ReferenceStencil = 1;
+	stMask.DepthBufferEnable = true;
+
+	DepthStencilState stTex = new DepthStencilState();
+	stTex.StencilEnable = true;
+	stTex.StencilFunction = CompareFunction.Equal;
+	stTex.ReferenceStencil = 1;
+	stTex.DepthBufferEnable = true;
+	
+	sb.Begin(SpriteSortMode.Immediate,BlendState.AlphaBlend,null,stMask,null);
+	float energyPercent = ModPlayer.energyMax == 0 ? .5f : ModPlayer.energy/ModPlayer.energyMax;
+	
+	Config.mainInstance.GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
+		PrimitiveType.LineStrip,
+		new VertexPositionColor[]{
+			new VertexPositionColor(new Vector3(x+4,y+4,0),Color.White),
+			new VertexPositionColor(new Vector3(x+4+texBar.Width*energyPercent,y+4,0),Color.White),
+			new VertexPositionColor(new Vector3(x+4+texBar.Width*energyPercent-texBar.Height/4,y+4+texBar.Height/2,0),Color.White),
+			new VertexPositionColor(new Vector3(x+4-texBar.Height/4,y+4+texBar.Height/2,0),Color.White)
+		},
+		0,
+		3);
+	sb.End();
+	
+	sb.Begin(SpriteSortMode.Immediate,BlendState.AlphaBlend,null,stTex,null);
 	sb.Draw(texBar,new Vector2(x+4,y+4),new Rectangle(0,0,texBar.Width,texBar.Height),Color.White);
+	sb.End();
+	
+	sb.Begin();
 }
 
 public static Color Alpha(Color color, float alpha) {
