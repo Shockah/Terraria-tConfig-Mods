@@ -1,2 +1,2 @@
 public static int HealthUpMaxHealth = 800, HealthUpMaxMana = 400;
-public static bool HealthUpSAO = false;
+public static bool HealthUpCustom = false;
