@@ -2,7 +2,7 @@ private static readonly Vector2[] shadowOffset = {new Vector2(-1,-1),new Vector2
 private static readonly Color[] heartColors = {Color.Red,Color.Orange,Color.Yellow,Color.GreenYellow,Color.Lime,Color.Cyan,Color.RoyalBlue,Color.MediumOrchid,Color.Pink};
 private static readonly Color[] starColors = {Color.Cyan,Color.CornflowerBlue,Color.Blue,Color.DarkViolet,Color.Magenta,Color.HotPink,Color.LightPink};
 
-public static void Initialize() {
+public void Initialize() {
 	Main.heartTexture = Main.goreTexture[Config.goreID["HealthUpHeart"]];
 	Main.manaTexture = Main.goreTexture[Config.goreID["HealthUpStar"]];
 }

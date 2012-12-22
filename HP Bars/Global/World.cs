@@ -29,6 +29,7 @@ public static void PreDrawInterface(SpriteBatch sb) {
 	foreach (Player player in Main.player) {
 		if (player == null) continue;
 		if (!player.active) continue;
+		if (player.dead || player.ghost) continue;
 		if (player.whoAmi == Main.myPlayer && !ModGeneric.HPBarShowMy) continue;
 		if (player.invis) continue;
 		float alpha = GetBarAlpha(player);

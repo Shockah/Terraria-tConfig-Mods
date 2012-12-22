@@ -1,5 +1,5 @@
 public void Initialize() {
-	if (item.maxStack > 1) item.maxStack *= ModGeneric.maxStackMultiplier;
+	if (item.maxStack > 1 && !item.name.EndsWith(" Coin")) item.maxStack *= ModGeneric.maxStackMultiplier;
 }
 
 public void Save(BinaryWriter bw) {

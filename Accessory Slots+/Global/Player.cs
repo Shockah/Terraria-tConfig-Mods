@@ -278,3 +278,20 @@ public void UpdatePlayer(Player player) {
 		}
 	}
 }
+
+public void PostKill(Player player, double dmg, int hitDirection, bool pvp, string deathText) {
+	Item[] items = Main.netMode != 2 && player.whoAmi == Main.myPlayer ? ModWorld.slots.itemSlots : ModWorld.accessories[player.whoAmi];
+	if (player.difficulty > 0) {
+		for (int i = 0; i < ModGeneric.extraSlots; i++) {
+			if (items[i].stack > 0) {
+				items[i].RunMethod("OnUnequip",player,-i-1);
+				int id = Item.NewItem((int)player.position.X,(int)player.position.Y,player.width,player.height,items[i],false);
+				Main.item[id].velocity.Y = Main.rand.Next(-20,1)*0.2f;
+				Main.item[id].velocity.X = Main.rand.Next(-20,21)*0.2f;
+				Main.item[id].noGrabDelay = 100;
+			}
+			items[i] = new Item();
+		}
+		if (Main.netMode != 2) ModWorld.SendItemData(Main.myPlayer,ModWorld.ExternalGetAccessorySlots(),-1,Main.myPlayer);
+	}
+}

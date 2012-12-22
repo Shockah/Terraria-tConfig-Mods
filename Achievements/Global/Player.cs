@@ -539,6 +539,7 @@ public void CheckAcBoss(Player player) {
 }
 
 public void PostKill(Player player, double dmg, int hitDirection, bool pvp, string deathText) {
+	if (player == null || player.whoAmi != Main.myPlayer) return;
 	int tileX = (int)Math.Floor(player.position.X/16d), tileY = (int)Math.Floor(player.position.Y/16d);
 	for (int yy = 0; yy < 3; yy++) for (int xx = 0; xx < 2; xx++) {
 		if (Main.tile[tileX+xx,tileY+yy].active && sandBlocks.Contains(Main.tile[tileX+xx,tileY+yy].type)) {

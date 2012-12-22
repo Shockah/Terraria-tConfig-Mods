@@ -113,7 +113,7 @@ public static bool PreDrawLifeHearts(SpriteBatch sb) {
 			sb.Draw(texBarBorder,new Vector2(x,y),new Rectangle(0,0,texBarBorder.Width,texBarBorder.Height),Color.White);
 			if (Codable.RunGlobalMethod("ModPlayer","GetYYYRace",new object[]{p.whoAmi})) {
 				Texture2D raceIcon = Main.goreTexture[Config.goreID["RaceIcon"+((string)Codable.customMethodReturn)]];
-				sb.Draw(raceIcon,new Vector2(x+texBarBorder.Height/2+27-raceIcon.Width/2,y+texBarBorder.Height/2-raceIcon.Height/2),new Rectangle(0,0,raceIcon.Width,raceIcon.Height),Color.White);
+				sb.Draw(raceIcon,new Vector2(x+texBarBorder.Height/2+18-raceIcon.Width/2,y+texBarBorder.Height/2-raceIcon.Height/2),new Rectangle(0,0,raceIcon.Width,raceIcon.Height),Color.White);
 			} else DrawPVPIcon(sb,x+texBarBorder.Height/2,y+texBarBorder.Height/2);
 			
 			int times = (int)Math.Ceiling(texBar.Height/2f);

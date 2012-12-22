@@ -41,6 +41,7 @@ public static void PreDrawInterface(SpriteBatch sb) {
 	List<string> names = new List<string>();
 	foreach (NPC npc in Main.npc) {
 		if (npc == null) continue;
+		if (!npc.active) continue;
 		if (npc.name == null || npc.name == "") continue;
 		
 		if (ignore.Contains(npc.whoAmI)) continue;
