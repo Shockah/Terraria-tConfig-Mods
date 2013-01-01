@@ -1,37 +1,30 @@
 public static Microsoft.Xna.Framework.Audio.SoundEffectInstance[] soundInstance = new Microsoft.Xna.Framework.Audio.SoundEffectInstance[64];
 public static int soundInstanceN = 0;
 
-private Tile tile;
 private Vector2 tilev;
 
-private readonly byte sheetWidth = 5;
-private int noteType, noteLevel;
-
 public void Initialize(int x, int y) {
-	tile = Main.tile[x,y];
 	tilev = new Vector2(x,y);
-	noteType = tile.frameNumber;
-	noteLevel = 0;
-	UpdateTileFrame();
-}
-public void Save(BinaryWriter bw) {
-	bw.Write((byte)noteLevel);
-}
-public void Load(BinaryReader br, int version) {
-	noteLevel = (int)br.ReadByte();
 }
 
 public void UseTile(Player player, int x, int y) {
 	Play(x,y);
-	ModWorld.GuiNoteBlock.Create(x,y);
+	if (Main.netMode == 0) {
+		ModWorld.GuiNoteBlock.Create(x,y,ModWorld.GetNoteLevel(tilev));
+	} else {
+		NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_GUI_REQUEST,-1,-1,(byte)Main.myPlayer,x,y);
+	}
 }
 public void hitWire(int x, int y) {
 	Play(x,y);
-}
-public void UpdateTileFrame() {
-	tile.frameNumber = (byte)noteType;
+	NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_PLAY,-1,-1,x,y,(byte)ModWorld.GetNoteLevel(tilev));
 }
 public void Play(int x, int y) {
+	Play(x,y,ModWorld.GetNoteLevel(tilev));
+}
+public void Play(int x, int y, int noteLevel) {
+	if (Main.netMode == 2) return;
+	
 	float level = 1f/12f*((noteLevel%12));
 	PlaySound(x*16,y*16,soundHandler.soundID[GetSoundName(noteLevel)],level);
 	
@@ -41,48 +34,36 @@ public void Play(int x, int y) {
 	ModWorld.AddNote(new Vector2(x*16+8,y*16+8),ModWorld.HSVtoRGB(hue,1f,1f));
 }
 public int ExternalGetNoteBlockLevel() {
-	return noteLevel;
+	return ModWorld.GetNoteLevel(tilev);
 }
 public void ExternalSetNoteBlockLevel(int value) {
-	noteLevel = value;
+	ModWorld.SetNoteLevel(tilev,value);
 }
 public void ExternalNoteBlockPlay() {
 	Play((int)tilev.X,(int)tilev.Y);
 }
-
-public string GetItemName() {
-	switch (noteType) {
-		case 0: return "Note Bass"; break;
-		case 1: return "Note Guitar"; break;
-		case 2: return "Note Percussion"; break;
-		case 3: return "Note Piano"; break;
-		case 4: return "Note Flute"; break;
-		default: return null;
-	}
+public void ExternalNoteBlockPlayLevel(int noteLevel) {
+	Play((int)tilev.X,(int)tilev.Y,noteLevel);
 }
+
 public string GetSoundName(int level) {
-	switch (noteType) {
-		case 0: return "noteBass"+(level < 12 ? "1" : "2"); break;
-		case 1: return "noteGuitar"+(level < 12 ? "1" : "2"); break;
-		case 2: return "notePercussion"+(level < 12 ? "1" : "2"); break;
-		case 3: return "notePiano"+(level < 12 ? "1" : "2"); break;
-		case 4: return "noteFlute"+(level < 12 ? "1" : "2"); break;
-		default: return null;
-	}
+	int type = Main.tile[(int)tilev.X,(int)tilev.Y].type;
+	
+	if (type == ModWorld.typeBass) return "noteBass"+(level < 12 ? "1" : "2");
+	if (type == ModWorld.typeFlute) return "noteFlute"+(level < 12 ? "1" : "2");
+	if (type == ModWorld.typeGuitar) return "noteGuitar"+(level < 12 ? "1" : "2");
+	if (type == ModWorld.typePercussion) return "notePercussion"+(level < 12 ? "1" : "2");
+	if (type == ModWorld.typePiano) return "notePiano"+(level < 12 ? "1" : "2");
+	return null;
 }
 
 public void KillTile(int x, int y, Player player) {
-	Item.NewItem(x*16,y*16,16,16,GetItemName());
-}
-
-public void UpdateFrame(int x, int y) {
-	tile.frameX = (short)((tile.frameNumber%sheetWidth)/16);
-	tile.frameY = (short)((tile.frameNumber/sheetWidth)/16);
-	if (Main.netMode == 2) NetMessage.SendTileSquare(-1,(int)tilev.X,(int)tilev.Y,1);
+	ModWorld.SetNoteLevel(tilev,-1);
 }
 
 public static void PlaySound(int x = -1, int y = -1, int Style = 1, float pitch = 0f) {
 	if (Main.dedServ || Main.soundVolume == 0f) return;
+	
 	bool flag = x == -1 || y == -1;
 	int num = Style;
 	float num2 = 1f, num3 = 0f;

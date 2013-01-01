@@ -1,10 +1,10 @@
-public class GuiNoteBlock:Interfaceable {
-	public static string[] soundNames = {"G","G#","A","A#","B","C","C#","D","D#","E","F","F#"};
+public class GuiNoteBlock : Interfaceable {
+	public static string[] soundNames = new string[]{"G","G#","A","A#","B","C","C#","D","D#","E","F","F#"};
 	
 	public static void Create(int x, int y) {
-		Codable.RunTileMethod(false,new Vector2(x,y),Main.tile[x,y].type,"ExternalGetNoteBlockLevel",new object[]{});
-		int noteLevel = (int)Codable.customMethodReturn;
-		
+		Create(x,y,ModWorld.GetNoteLevel(new Vector2(x,y)));
+	}
+	public static void Create(int x, int y, int noteLevel) {
 		Config.tileInterface = new InterfaceObj(new GuiNoteBlock(),0,24);
 		Player player = Main.player[Main.myPlayer];
 		Config.tileInterface.SetLocation(new Vector2(x,y));
@@ -27,8 +27,14 @@ public class GuiNoteBlock:Interfaceable {
 	
 	public void ButtonClicked(int num) {
 		int x = (int)Config.tileInterface.sourceLocation.X, y = (int)Config.tileInterface.sourceLocation.Y;
-		Codable.RunTileMethod(false,new Vector2(x,y),Main.tile[x,y].type,"ExternalSetNoteBlockLevel",new object[]{num});
-		Codable.RunTileMethod(false,new Vector2(x,y),Main.tile[x,y].type,"ExternalNoteBlockPlay",new object[]{});
-		Create(x,y);
+		
+		if (Main.netMode == 0) {
+			ModWorld.SetNoteLevel(new Vector2(x,y),num);
+		} else {
+			NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_SETLEVEL,-1,-1,x,y,(byte)num);
+		}
+		Codable.RunTileMethod(false,new Vector2(x,y),Main.tile[x,y].type,"ExternalNoteBlockPlay");
+		
+		Create(x,y,num);
 	}
 }
