@@ -442,7 +442,10 @@ public void UpdatePlayer(Player player) {
 	int count = 0;
 	for (int i = 40; i <= 43; i++) {
 		if (player.inventory[i] == null || player.inventory[i].name == null || player.inventory[i].name == "" || player.inventory[i].stack <= 0) continue;
-		if (player.inventory[i].name.EndsWith(" Coin")) count += player.inventory[i].stack*player.inventory[i].value;
+		if (player.inventory[i].name == "Copper Coin") count += player.inventory[i].stack;
+		else if (player.inventory[i].name == "Silver Coin") count += player.inventory[i].stack*100;
+		else if (player.inventory[i].name == "Gold Coin") count += player.inventory[i].stack*10000;
+		else if (player.inventory[i].name == "Platinum Coin") count += player.inventory[i].stack*1000000;
 	}
 	ExternalSetAchievementProgress("TERRARIA_GET10P",count);
 	

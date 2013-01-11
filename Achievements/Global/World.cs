@@ -206,6 +206,10 @@ public static void PostDraw(SpriteBatch sb) {
 	if (GuiAchievements.visible) Main.player[Main.myPlayer].mouseInterface = true;
 }
 
+public static void CustomGUIsOpen(Dictionary<int,int> A) {
+	if (GuiAchievements.visible) A[0]++;
+}
+
 public static bool MouseIn(Rectangle rect) {
 	return Main.mouseX >= rect.X && Main.mouseY >= rect.Y && Main.mouseX < rect.X+rect.Width && Main.mouseY < rect.Y+rect.Height;
 }
