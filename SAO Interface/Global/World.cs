@@ -230,6 +230,11 @@ public static bool PreDrawBuffsList(SpriteBatch sb) {
 			if (p.ghost) return false;
 			if (Main.playerInventory) return false;
 			
+			Dictionary<int,int> A = new Dictionary<int,int>();
+			A.Add(0,0);
+			Codable.RunGlobalMethod("ModWorld","CustomGUIsOpen",A);
+			if (A[0] > 0) return false;
+			
 			bool infoText = p.accCompass > 0 || p.accDepthMeter > 0 || p.accWatch > 0;
 			DrawBuffsList(sb,30+(infoText ? 5*38 : 0),76+texBarBorder.Height+4);
 		} break;
@@ -244,6 +249,11 @@ public static bool PreDrawInformationTexts(SpriteBatch sb) {
 	
 	switch (ModGeneric.InterfaceType) {
 		case INTERFACE_SAO: case INTERFACE_SAO_TEXT: case INTERFACE_ALO: case INTERFACE_ALO_TEXT: {
+			Dictionary<int,int> A = new Dictionary<int,int>();
+			A.Add(0,0);
+			Codable.RunGlobalMethod("ModWorld","CustomGUIsOpen",A);
+			if (A[0] > 0) return false;
+			
 			DrawInfoText(sb,22,76+texBarBorder.Height+4);
 		} break;
 		default: return true;
