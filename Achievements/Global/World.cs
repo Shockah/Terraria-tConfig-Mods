@@ -72,7 +72,7 @@ public static void NetReceive(int messageType, BinaryReader br) {
 				ModPlayer.Achievement ac = ModPlayer.GetAchievement(acApiName);
 				if (ac == null) return;
 				
-				NetMessage.SendData(25,-1,-1,player.name+" achieved: "+ac.title+" (+"+ac.value+" point"+(ac.value == 1 ? "" : "s")+")",255,0f,255f,136f, 0);
+				NetMessage.SendData(25,-1,-1,player.name+" achieved: "+ac.title+" (+"+ac.value+" point"+(ac.value == 1 ? "" : "s")+")",255,0f,255f,136f,0);
 			} break;
 			default: break;
 		}
@@ -214,6 +214,7 @@ public static bool MouseIn(Rectangle rect) {
 	return Main.mouseX >= rect.X && Main.mouseY >= rect.Y && Main.mouseX < rect.X+rect.Width && Main.mouseY < rect.Y+rect.Height;
 }
 public static void DrawStringShadowed(SpriteBatch sb, SpriteFont font, string text, Vector2 pos, Color color, Color colorShadow, Vector2 origin = default(Vector2), float scale = 1f, SpriteEffects effects = SpriteEffects.None) {
+	if (text == null) return;
 	foreach (Vector2 vecOff in shadowOffset) sb.DrawString(font,text,new Vector2(pos.X+vecOff.X,pos.Y+vecOff.Y),colorShadow,0f,origin,scale,effects,0f);
 	sb.DrawString(font,text,pos,color,0f,origin,scale,effects,0f);
 }

@@ -47,11 +47,7 @@ public class Category {
 		
 		if (toggled) {
 			for (int i = 0; i < categories.Count; i++) categories[i].Draw(sb,xx+24,ref yy,ww-48);
-			for (int i = 0; i < achievements.Count; i++) {
-				int parents = 0;
-				if (i != 0) for (int j = i-1; j >= 0; j--) if (achievements[j+1].parent != null && achievements[j+1].parent == achievements[j].apiName) parents++; else break;
-				achievements[i].Draw(sb,xx+24+(parents*24),ref yy,ww-48-(parents*48));
-			}
+			for (int i = 0; i < achievements.Count; i++) achievements[i].Draw(sb,xx+24,ref yy,ww-48);
 		}
 	}
 	

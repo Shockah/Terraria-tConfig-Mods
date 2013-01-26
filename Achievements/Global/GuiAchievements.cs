@@ -7,6 +7,7 @@ public class GuiAchievements {
 	
 	public static bool visible = false;
 	public static int scroll, setScroll;
+	public static List<ModPlayer.Achievement> achievements;
 	public static List<Category> categories;
 	
 	public static Microsoft.Xna.Framework.Input.MouseState? state = null, stateOld = null;
@@ -44,6 +45,7 @@ public class GuiAchievements {
 		
 		int yStart = guiY-scroll, yy = yStart;
 		for (int i = 0; i < categories.Count; i++) categories[i].Draw(sb,guiX,ref yy,guiW-32);
+		for (int i = 0; i < achievements.Count; i++) achievements[i].Draw(sb,guiX,ref yy,guiW-32);
 		
 		sb.End();
 		sb.Begin();
@@ -108,27 +110,41 @@ public class GuiAchievements {
 		List<ModPlayer.Achievement> list = new List<ModPlayer.Achievement>(ModPlayer.achievements);
 		for (int i = 0; i < list.Count; i++) {
 			ModPlayer.Achievement ac = list[i];
-			if (ac.category == null || ac.category == "" || !ac.CheckDifficulty() || ((ac.hidden || !ac.CheckNetMode() || !ac.CheckHardMode()) && !ac.achieved) || (ac.parent != null && !ModPlayer.ExternalGetAchieved(ac.parent))) list.RemoveAt(i--);
+			if (!ac.CheckDifficulty() || ((ac.hidden || !ac.CheckNetMode() || !ac.CheckHardMode()) && !ac.achieved) || (ac.parent != null && !ModPlayer.ExternalGetAchieved(ac.parent))) list.RemoveAt(i--);
+			ac.sub.Clear();
 		}
 		
+		achievements = new List<ModPlayer.Achievement>();
 		List<Category> cat = new List<Category>();
 		for (int i = 0; i < list.Count; i++) {
 			ModPlayer.Achievement ac = list[i];
-			string[] spl = ac.category.Replace("->",""+(char)1).Split((char)1);
 			
-			List<Category> current = cat;
-			Category catCurrent = null;
-			for (int j = 0; j < spl.Length; j++) {
-				if (!current.Contains(new Category(spl[j]))) current.Add(new Category(spl[j]));
-				for (int k = 0; k < current.Count; k++) if (current[k].Equals(spl[j])) {
-					catCurrent = current[k];
-					current = catCurrent.categories;
-					goto L;
+			bool b = true;
+			if (ac.parent != null) {
+				foreach (ModPlayer.Achievement ac2 in list) if (ac2.apiName == ac.parent) {
+					ac2.sub.Add(ac);
+					b = false;
+					break;
 				}
-				L: {}
 			}
 			
-			catCurrent.achievements.Add(ac);
+			if (b) {
+				if (ac.category != null && ac.category != "") {
+					string[] spl = ac.category.Replace("->",""+(char)1).Split((char)1);
+					List<Category> current = cat;
+					Category catCurrent = null;
+					for (int j = 0; j < spl.Length; j++) {
+						if (!current.Contains(new Category(spl[j]))) current.Add(new Category(spl[j]));
+						for (int k = 0; k < current.Count; k++) if (current[k].Equals(spl[j])) {
+							catCurrent = current[k];
+							current = catCurrent.categories;
+							goto L;
+						}
+						L: {}
+					}
+					catCurrent.achievements.Add(ac);
+				} else achievements.Add(ac);
+			}
 		}
 		
 		categories = SortCategories(cat);
@@ -196,6 +212,7 @@ public class GuiAchievements {
 			L: {}
 		}
 		
+		foreach (ModPlayer.Achievement ac in ret) if (ac.sub.Count > 0) ac.sub = SortAchievements(ac.sub);
 		return ret;
 	}
 }

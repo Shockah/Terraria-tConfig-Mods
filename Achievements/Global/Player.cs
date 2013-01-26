@@ -12,6 +12,7 @@ public const int
 
 public static bool[] bossState;
 public static Vector2 lastPos;
+public static Item lastReforgeItem;
 
 public static List<int> sandBlocks = new List<int>(new int[]{53,112,116,123});
 
@@ -21,6 +22,7 @@ public static Microsoft.Xna.Framework.Input.KeyboardState keyState = Microsoft.X
 public static void Initialize() {
 	achievements.Clear();
 	ModWorld.notifiers.Clear();
+	lastReforgeItem = null;
 	
 	bossState = new bool[]{false,false,false,false,false,false,false,false};
 	lastPos = new Vector2(-1,-1);
@@ -90,6 +92,10 @@ public void Load(BinaryReader br, int version) {
 			}
 		}
 	} catch (Exception) {}
+}
+
+public static bool IsBlankItem(Item item) {
+	return item == null || item.type == 0 || item.name == null || item.name == "" || item.name == "Unloaded Item" || item.stack <= 0;
 }
 
 public static void ExternalAddAchievement(string apiName, string category, string title, string description, string parent = null, int value = 10, Texture2D tex = null, bool hidden = false) {
@@ -208,16 +214,17 @@ public static void ExternalInitAchievementsDelegates(
 {
 	string s, cat;
 	
-	cat = "Terraria";
-	s = "TERRARIA_KILLPINKY"; AddAchievement(s,cat,"HOW COULD YOU?!","Slay Pinky.",null,10,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,true);
+	#region pre-hardmode
+	cat = "";
+	s = "TERRARIA_KILLPINKY"; AddAchievement(s,cat,"HOW COULD YOU?!","Slay Pinky.",null,10,Main.goreTexture[Config.goreID["AC_"+s]],true);
 	s = "TERRARIA_GETACC"; AddAchievement(s,cat,"Gearing up","Equip your first accessory.",null,10,Main.itemTexture[Config.itemDefs.byName["Cloud in a Bottle"].type],false);
-	s = "TERRARIA_GETANGELSTATUE"; AddAchievement(s,cat,"What do I do with it?","Find an Angel Statue.",null,10,Main.itemTexture[Config.itemDefs.byName["Angel Statue"].type],false);
+	s = "TERRARIA_GETANGELSTATUE"; AddAchievement(s,cat,"What do I do with it?","Find an Angel Statue.",null,10,Main.itemTexture[Config.itemDefs.byName["Angel Statue"].type],true);
 	s = "TERRARIA_FIRSTHEALTH"; AddAchievement(s,cat,"Heart Breaker","Use your first Life Crystal.",null,10,Main.itemTexture[Config.itemDefs.byName["Life Crystal"].type],false);
 	s = "TERRARIA_MAXHEALTH"; AddAchievement(s,cat,"Fit as a fiddle","Reach max health.","TERRARIA_FIRSTHEALTH",30,Main.itemTexture[Config.itemDefs.byName["Life Crystal"].type],false);
 	s = "TERRARIA_FIRSTMANA"; AddAchievement(s,cat,"May the Force be with you","Use your first Mana Crystal.",null,10,Main.itemTexture[Config.itemDefs.byName["Mana Crystal"].type],false);
 	s = "TERRARIA_MAXMANA"; AddAchievement(s,cat,"Parry Hotter","Reach max mana.","TERRARIA_FIRSTMANA",30,Main.itemTexture[Config.itemDefs.byName["Mana Crystal"].type],false);
 	s = "TERRARIA_LONGFALL"; AddAchievement(s,cat,"Are we there yet?","Fall at least 500ft.",null,20,Main.itemTexture[Config.itemDefs.byName["Feather"].type],true);
-	s = "TERRARIA_METEOR"; AddAchievement(s,cat,"A gift from SPAAAAAAAAACE!","Get a Meteorite to fall.",null,10,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,false);
+	s = "TERRARIA_METEOR"; AddAchievement(s,cat,"A gift from SPAAAAAAAAACE!","Get a Meteorite to fall.",null,10,Main.goreTexture[Config.goreID["AC_"+s]],false);
 	s = "TERRARIA_GET10P"; AddAchievement(s,cat,"Bling Bling","Acquire 10 Platinum Coins.",null,30,Main.itemTexture[Config.itemDefs.byName["Platinum Coin"].type],false);
 	s = "TERRARIA_KILLGUIDE"; AddAchievement(s,cat,"Winning!","Kill the Guide.",null,20,Main.itemTexture[Config.itemDefs.byName["Guide Voodoo Doll"].type],true);
 	s = "TERRARIA_TOTALDMG100K"; AddAchievement(s,cat,"Massive Damage","Deal a total of 100,000 damage.",null,20,Main.itemTexture[Config.itemDefs.byName["Night's Edge"].type],false);
@@ -228,13 +235,14 @@ public static void ExternalInitAchievementsDelegates(
 	s = "TERRARIA_TOTALMOVE10K"; AddAchievement(s,cat,"Stepping out","Move a total of 10,000ft.",null,10,Main.itemTexture[Config.itemDefs.byName["Hermes Boots"].type],false);
 	s = "TERRARIA_TOTALMOVE100K"; AddAchievement(s,cat,"Wanderer","Move a total of 100,000ft.","TERRARIA_TOTALMOVE10K",20,Main.itemTexture[Config.itemDefs.byName["Rocket Boots"].type],false);
 	s = "TERRARIA_TOTALMOVE1M"; AddAchievement(s,cat,"Globe-trotter","Move a total of 1,000,000ft.","TERRARIA_TOTALMOVE100K",30,Main.itemTexture[Config.itemDefs.byName["Spectre Boots"].type],false);
-	s = "TERRARIA_MISMATCHED"; AddAchievement(s,cat,"Mismatched","Wear all different pieces of armor.",null,10,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,true);
+	s = "TERRARIA_TOTALMOVE10M"; AddAchievement(s,cat,"Around the World in 80 Days","Move a total of 10,000,000ft.","TERRARIA_TOTALMOVE1M",40,Main.goreTexture[Config.goreID["AC_"+s]],false);
+	s = "TERRARIA_MISMATCHED"; AddAchievement(s,cat,"Mismatched","Wear all different pieces of armor.",null,10,Main.ninjaTexture,true);
 	s = "TERRARIA_MAGICMIRROR"; AddAchievement(s,cat,"I must go, my people need me","Use a Magic Mirror.",null,10,Main.itemTexture[Config.itemDefs.byName["Magic Mirror"].type],true);
 	s = "TERRARIA_ALE"; AddAchievement(s,cat,"Tipsy","Drink Ale.",null,10,Main.itemTexture[Config.itemDefs.byName["Ale"].type],true);
 	s = "TERRARIA_GLOWINGMUSHROOM"; AddAchievement(s,cat,"Trippin'","Acquire a Glowing Mushroom.",null,10,Main.itemTexture[Config.itemDefs.byName["Glowing Mushroom"].type],true);
 	s = "TERRARIA_WHOOPIECUSHION"; AddAchievement(s,cat,"Quick, someone light a match!","Use a Whoopie Cushion.",null,10,Main.itemTexture[Config.itemDefs.byName["Whoopie Cushion"].type],true);
 	
-	cat = "Terraria->NPCs";
+	cat = "NPCs";
 	s = "TERRARIA_NPC_MERCHANT"; AddAchievement(s,cat,"It's a Pawn Shop","Get Merchant to spawn.",null,10,Main.npcHeadTexture[NPC.TypeToNum(Config.npcDefs.byName["Merchant"].type)],false);
 	s = "TERRARIA_NPC_NURSE"; AddAchievement(s,cat,"Scrubs","Get Nurse to spawn.",null,10,Main.npcHeadTexture[NPC.TypeToNum(Config.npcDefs.byName["Nurse"].type)],false);
 	s = "TERRARIA_NPC_DEMOLITIONIST"; AddAchievement(s,cat,"Oh, sorry, did you need that leg?","Get Demolitionist to spawn.",null,10,Main.npcHeadTexture[NPC.TypeToNum(Config.npcDefs.byName["Demolitionist"].type)],false);
@@ -243,25 +251,27 @@ public static void ExternalInitAchievementsDelegates(
 	s = "TERRARIA_NPC_CLOTHIER"; AddAchievement(s,cat,"Curse - undone","Get Clothier to spawn.",null,10,Main.npcHeadTexture[NPC.TypeToNum(Config.npcDefs.byName["Clothier"].type)],false);
 	s = "TERRARIA_NPC_MECHANIC"; AddAchievement(s,cat,"The shocking truth","Unbind Mechanic.",null,10,Main.npcHeadTexture[NPC.TypeToNum(Config.npcDefs.byName["Mechanic"].type)],false);
 	s = "TERRARIA_NPC_GOBLINTINKERER"; AddAchievement(s,cat,"The enemy of my enemy","Unbind Goblin Tinkerer.",null,10,Main.npcHeadTexture[NPC.TypeToNum(Config.npcDefs.byName["Goblin Tinkerer"].type)],false);
+	s = "TERRARIA_REFORGE"; AddAchievement(s,cat,"Harder, Better, Faster, Stronger","Reforge an item.","TERRARIA_NPC_GOBLINTINKERER",20,Main.reforgeTexture,false);
 	
-	cat = "Terraria->Death";
-	s = "TERRARIA_DEATHDUNGEONGUARDIAN"; AddAchievement(s,cat,"Leeroy Jenkins","Get killed by a Dungeon Guardian.",null,10,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,true);
-	s = "TERRARIA_DEATHCORRUPTGOLDFISH"; AddAchievement(s,cat,"In Soviet Russia...","Get killed by a Corrupt Goldfish.",null,10,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,true);
+	cat = "Death";
+	s = "TERRARIA_DEATHDUNGEONGUARDIAN"; AddAchievement(s,cat,"Leeroy Jenkins","Get killed by a Dungeon Guardian.",null,10,Main.goreTexture[Config.goreID["AC_"+s]],true);
+	s = "TERRARIA_DEATHCORRUPTGOLDFISH"; AddAchievement(s,cat,"In Soviet Russia...","Get killed by a Corrupt Goldfish.",null,10,Main.goreTexture[Config.goreID["AC_"+s]],true);
 	s = "TERRARIA_DEATHMIMIC"; AddAchievement(s,cat,"Rick Roll'd","Get killed by a Mimic.",null,10,Main.itemTexture[Config.itemDefs.byName["Gold Chest"].type],true);
 	s = "TERRARIA_DEATHSAND"; AddAchievement(s,cat,"Sand is overpowered","Get killed by sand.",null,10,Main.itemTexture[Config.itemDefs.byName["Sand Block"].type],true);
 	
-	cat = "Terraria->Biomes";
-	s = "TERRARIA_BIOMEUNDERWORLD"; AddAchievement(s,cat,"Sinner","Reach the Underworld.",null,20,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,false);
-	s = "TERRARIA_BIOMEJUNGLE"; AddAchievement(s,cat,"Welcome to the Jungle","Find the Jungle biome.",null,10,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,false);
-	s = "TERRARIA_BIOMECORRUPTION"; AddAchievement(s,cat,"I have a bad feeling about this","Enter a Corruption biome.",null,10,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,false);
-	s = "TERRARIA_BIOMEHALLOW"; AddAchievement(s,cat,"This IS Disney Land!","Enter a Hallow biome.",null,30,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,false);
+	cat = "Biomes";
+	s = "TERRARIA_BIOMEUNDERWORLD"; AddAchievement(s,cat,"Sinner","Reach the Underworld.",null,20,Main.goreTexture[Config.goreID["AC_"+s]],false);
+	s = "TERRARIA_BIOMEJUNGLE"; AddAchievement(s,cat,"Welcome to the Jungle","Find the Jungle biome.",null,10,Main.goreTexture[Config.goreID["AC_"+s]],false);
+	s = "TERRARIA_BIOMECORRUPTION"; AddAchievement(s,cat,"I have a bad feeling about this","Enter a Corruption biome.",null,10,Main.goreTexture[Config.goreID["AC_"+s]],false);
+	s = "TERRARIA_BIOMEHALLOW"; AddAchievement(s,cat,"This IS Disney Land!","Enter a Hallow biome.",null,30,Main.goreTexture[Config.goreID["AC_"+s]],false);
 	
-	cat = "Terraria->Crafting";
+	cat = "Crafting";
 	s = "TERRARIA_GETGRAPPLINGHOOK"; AddAchievement(s,cat,"Hooked","Acquire a Grappling Hook.",null,10,Main.itemTexture[Config.itemDefs.byName["Grappling Hook"].type],false);
 	s = "TERRARIA_GETIVYWHIP"; AddAchievement(s,cat,"Vinely Inspired","Acquire an Ivy Whip.","TERRARIA_GETGRAPPLINGHOOK",10,Main.itemTexture[Config.itemDefs.byName["Ivy Whip"].type],false);
+	s = "TERRARIA_GETNIGHTSEDGE"; AddAchievement(s,cat,"The Four Sword","Acquire a Night's Edge.",null,20,Main.itemTexture[Config.itemDefs.byName["Night's Edge"].type],false);
 	s = "TERRARIA_GETSTARCANNON"; AddAchievement(s,cat,"Shooting Stars","Acquire a Star Cannon.",null,20,Main.itemTexture[Config.itemDefs.byName["Star Cannon"].type],false);
 	
-	cat = "Terraria->Mining";
+	cat = "Mining";
 	s = "TERRARIA_MINECOPPER"; AddAchievement(s,cat,"Struck Copper","Mine Copper Ore.",null,10,Main.itemTexture[Config.itemDefs.byName["Copper Ore"].type],false);
 	s = "TERRARIA_MINEIRON"; AddAchievement(s,cat,"Struck Iron","Mine Iron Ore.",null,10,Main.itemTexture[Config.itemDefs.byName["Iron Ore"].type],false);
 	s = "TERRARIA_MINESILVER"; AddAchievement(s,cat,"Struck Silver","Mine Silver Ore.",null,10,Main.itemTexture[Config.itemDefs.byName["Silver Ore"].type],false);
@@ -269,53 +279,59 @@ public static void ExternalInitAchievementsDelegates(
 	s = "TERRARIA_MINEMETEORITE"; AddAchievement(s,cat,"Struck Meteorite","Mine Meteorite.",null,20,Main.itemTexture[Config.itemDefs.byName["Meteorite"].type],false);
 	s = "TERRARIA_MINEHELLSTONE"; AddAchievement(s,cat,"Struck Hellstone","Mine Hellstone.",null,20,Main.itemTexture[Config.itemDefs.byName["Hellstone"].type],false);
 	
-	cat = "Terraria->Multiplayer";
-	s = "TERRARIA_MP"; AddAchievement(s,cat,"Double the fun!","Join a multiplayer game.",null,10,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,false);
+	cat = "Multiplayer";
+	s = "TERRARIA_MP"; AddAchievement(s,cat,"Double the fun!","Join a multiplayer game.",null,10,Main.goreTexture[Config.goreID["AC_"+s]],false);
 	s = "TERRARIA_PVPINVISIBLE"; AddAchievement(s,cat,"Et tu, Brutus?","Kill another player in PVP while being invisible.",null,20,Main.itemTexture[Config.itemDefs.byName["Invisibility Potion"].type],true);
 	
-	cat = "Terraria->Bosses";
+	cat = "Bosses";
 	s = "TERRARIA_BOSS_EOC"; AddAchievement(s,cat,"Eye Sore","Defeat the Eye of Cthulhu.",null,20,Main.itemTexture[Config.itemDefs.byName["Suspicious Looking Eye"].type],false);
 	s = "TERRARIA_BOSS_EOW"; AddAchievement(s,cat,"You want spice with that?","Defeat the Eater of Worlds.",null,20,Main.itemTexture[Config.itemDefs.byName["Worm Food"].type],false);
-	s = "TERRARIA_BOSS_SKELETRON"; AddAchievement(s,cat,"Exorcist","Defeat Skeletron.",null,20,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,false);
+	s = "TERRARIA_BOSS_SKELETRON"; AddAchievement(s,cat,"Exorcist","Defeat Skeletron.",null,20,Main.goreTexture[Config.goreID["AC_"+s]],false);
 	s = "TERRARIA_BOSS_KINGSLIME"; AddAchievement(s,cat,"Look at the size of that thing!","Defeat King Slime.",null,20,Main.itemTexture[Config.itemDefs.byName["Slime Crown"].type],false);
-	s = "TERRARIA_BOSS_WOF"; AddAchievement(s,cat,"Welcome to Hardmode","Defeat the Wall of Flesh.",null,30,Config.goreID.ContainsKey("AC_"+s) ? Main.goreTexture[Config.goreID["AC_"+s]] : null,false);
+	s = "TERRARIA_BOSS_WOF"; AddAchievement(s,cat,"Welcome to Hardmode","Defeat the Wall of Flesh.",null,30,Main.goreTexture[Config.goreID["AC_"+s]],false);
 	
-	cat = "Terraria->Events";
+	cat = "Events";
 	s = "TERRARIA_EVENT_BLOODMOON"; AddAchievement(s,cat,"Git off mah lawn","Survive Blood Moon.",null,10,Main.itemTexture[Config.itemDefs.byName["Deathweed"].type],false);
 	s = "TERRARIA_EVENT_GOBLIN"; AddAchievement(s,cat,"It's quiet... too quiet","Defeat the Goblin Army.",null,20,Main.itemTexture[Config.itemDefs.byName["Goblin Battle Standard"].type],false);
+	#endregion
 	
-	cat = "Terraria->Hardmode";
-	s = "TERRARIA_EVENT_SNOWMEN"; AddAchievement(s,cat,"Winter Warland","Defeat the Frost Legion.",null,40,Main.itemTexture[Config.itemDefs.byName["Snow Globe"].type],false);
+	#region hardmode
+	cat = "";
 	s = "TERRARIA_HM_KILLWYVERNNODMG"; AddAchievement(s,cat,"Dragonborn","Kill a Wyvern without taking damage.",null,40,Main.itemTexture[Config.itemDefs.byName["Soul of Flight"].type],false);
 	
-	cat = "Terraria->Hardmode->NPCs";
+	cat = "NPCs";
 	s = "TERRARIA_NPC_WIZARD"; AddAchievement(s,cat,"Chafing is more important than you","Unbind Wizard.",null,30,Main.npcHeadTexture[NPC.TypeToNum(Config.npcDefs.byName["Wizard"].type)],false);
 	s = "TERRARIA_NPC_SANTACLAUS"; AddAchievement(s,cat,"You thought I wasn't real?","Get Santa Claus to spawn.",null,30,Main.npcHeadTexture[NPC.TypeToNum(Config.npcDefs.byName["Santa Claus"].type)],false);
 	
-	cat = "Terraria->Hardmode->Crafting";
+	cat = "Crafting";
 	s = "TERRARIA_GETMEGASHARK"; AddAchievement(s,cat,"Land Shark","Acquire a Megashark.",null,30,Main.itemTexture[Config.itemDefs.byName["Megashark"].type],false);
-	s = "TERRARIA_GETREDPHASESABER"; AddAchievement(s,cat,"I am your father","Acquire a Red Phasesaber.",null,30,Main.itemTexture[Config.itemDefs.byName["Red Phaseblade"].type],true);
+	s = "TERRARIA_GETREDPHASESABER"; AddAchievement(s,cat,"I am your father","Acquire a Red Phasesaber.",null,30,Main.itemTexture[Config.itemDefs.byName["Red Phasesaber"].type],true);
 	s = "TERRARIA_GETEXCALIBUR"; AddAchievement(s,cat,"All Hail King Arthur!","Acquire an Excalibur.",null,30,Main.itemTexture[Config.itemDefs.byName["Excalibur"].type],false);
 	s = "TERRARIA_GETGUNGNIR"; AddAchievement(s,cat,"The Swaying One","Acquire a Gungnir.",null,30,Main.itemTexture[Config.itemDefs.byName["Gungnir"].type],false);
 	s = "TERRARIA_GETRAINBOWROD"; AddAchievement(s,cat,"IT'S A DOUBLE RAINBOW!!!","Acquire a Rainbow Rod.",null,30,Main.itemTexture[Config.itemDefs.byName["Rainbow Rod"].type],false);
+	s = "TERRARIA_GETHALLOWEDREPEATER"; AddAchievement(s,cat,"Holy Crossbolts, Batman!","Acquire a Hallowed Repeater.",null,30,Main.itemTexture[Config.itemDefs.byName["Hallowed Repeater"].type],false);
 	s = "TERRARIA_GETWINGS"; AddAchievement(s,cat,"Gives You Wiiings!","Acquire Wings.",null,30,Main.itemTexture[Config.itemDefs.byName["Angel Wings"].type],false);
 	
-	cat = "Terraria->Hardmode->Mining";
+	cat = "Mining";
 	s = "TERRARIA_HM_DEMONALTAR"; AddAchievement(s,cat,"Pwnage","Break a Demon Altar.",null,30,Main.itemTexture[Config.itemDefs.byName["Pwnhammer"].type],false);
 	s = "TERRARIA_HM_MINECOBALT"; AddAchievement(s,cat,"Struck Cobalt","Mine Cobalt Ore.",null,30,Main.itemTexture[Config.itemDefs.byName["Cobalt Ore"].type],false);
 	s = "TERRARIA_HM_MINEMYTHRIL"; AddAchievement(s,cat,"Struck Mythril","Mine Mythril Ore.",null,30,Main.itemTexture[Config.itemDefs.byName["Mythril Ore"].type],false);
 	s = "TERRARIA_HM_MINEADAMANTITE"; AddAchievement(s,cat,"Struck Adamantite","Mine Adamantite Ore.",null,30,Main.itemTexture[Config.itemDefs.byName["Adamantite Ore"].type],false);
 	
-	cat = "Terraria->Hardmode->Bosses";
+	cat = "Bosses";
 	s = "TERRARIA_HM_BOSS_TWINS"; AddAchievement(s,cat,"An Eye for an Eye","Defeat The Twins.",null,40,Main.itemTexture[Config.itemDefs.byName["Mechanical Eye"].type],false);
 	s = "TERRARIA_HM_BOSS_DESTROYER"; AddAchievement(s,cat,"Now With Lazers?!?!","Defeat The Destroyer.",null,40,Main.itemTexture[Config.itemDefs.byName["Mechanical Worm"].type],false);
 	s = "TERRARIA_HM_BOSS_PRIME"; AddAchievement(s,cat,"Terror Gets an Upgrade","Defeat Skeletron Prime.",null,40,Main.itemTexture[Config.itemDefs.byName["Mechanical Skull"].type],false);
+	
+	cat = "Events";
+	s = "TERRARIA_EVENT_SNOWMEN"; AddAchievement(s,cat,"Winter Warland","Defeat the Frost Legion.",null,40,Main.itemTexture[Config.itemDefs.byName["Snow Globe"].type],false);
+	#endregion
 	
 	ConfigNetMode(new string[]{"TERRARIA_MP","TERRARIA_PVPINVISIBLE"},1);
 	ConfigDifficulty(new string[]{"TERRARIA_DEATHDUNGEONGUARDIAN","TERRARIA_DEATHSAND","TERRARIA_DEATHCORRUPTGOLDFISH","TERRARIA_DEATHMIMIC"},3);
 	ConfigHardmode(new string[]{"TERRARIA_EVENT_SNOWMEN","TERRARIA_GETMEGASHARK","TERRARIA_GETREDPHASESABER","TERRARIA_HM_MINECOBALT",
 		"TERRARIA_HM_MINEMYTHRIL","TERRARIA_HM_MINEADAMANTITE","TERRARIA_HM_BOSS_TWINS","TERRARIA_HM_BOSS_DESTROYER","TERRARIA_HM_BOSS_PRIME",
-		"TERRARIA_GETEXCALIBUR","TERRARIA_GETGUNGNIR","TERRARIA_GETRAINBOWROD","TERRARIA_GETWINGS","TERRARIA_HM_DEMONALTAR",
+		"TERRARIA_GETEXCALIBUR","TERRARIA_GETGUNGNIR","TERRARIA_GETRAINBOWROD","TERRARIA_GETWINGS","TERRARIA_GETHALLOWEDREPEATER","TERRARIA_HM_DEMONALTAR",
 		"TERRARIA_NPC_WIZARD","TERRARIA_NPC_SANTACLAUS","TERRARIA_HM_KILLWYVERNNODMG","TERRARIA_BIOMEHALLOW","TERRARIA_DEATHMIMIC"},2);
 	
 	if (GetProgress("TERRARIA_MAXHEALTH")[1] == null) ConfigProgress("TERRARIA_MAXHEALTH",400,null);
@@ -330,6 +346,8 @@ public static void ExternalInitAchievementsDelegates(
 	ConfigProgress("TERRARIA_TOTALMOVE10K",10000d,FormatAcDist);
 	ConfigProgress("TERRARIA_TOTALMOVE100K",100000d,FormatAcDist);
 	ConfigProgress("TERRARIA_TOTALMOVE1M",1000000d,FormatAcDist);
+	ConfigProgress("TERRARIA_TOTALMOVE10M",10000000d,FormatAcDist);
+	if ((double)GetProgress("TERRARIA_TOTALMOVE10M")[0] < (double)GetProgress("TERRARIA_TOTALMOVE1M")[0]) SetProgress("TERRARIA_TOTALMOVE10M",GetProgress("TERRARIA_TOTALMOVE10M")[0],null);
 }
 
 public static string FormatAcCoins(object o1, object o2) {
@@ -432,9 +450,11 @@ public void UpdatePlayer(Player player) {
 		if (player.inventory[i].name == "Ivy Whip") ExternalAchieve("TERRARIA_GETIVYWHIP");
 		if (player.inventory[i].name == "Megashark") ExternalAchieve("TERRARIA_GETMEGASHARK");
 		if (player.inventory[i].name == "Star Cannon") ExternalAchieve("TERRARIA_GETSTARCANNON");
+		if (player.inventory[i].name == "Night's Edge") ExternalAchieve("TERRARIA_GETNIGHTSEDGE");
 		if (player.inventory[i].name == "Excalibur") ExternalAchieve("TERRARIA_GETEXCALIBUR");
 		if (player.inventory[i].name == "Gungnir") ExternalAchieve("TERRARIA_GETGUNGNIR");
 		if (player.inventory[i].name == "Rainbow Rod") ExternalAchieve("TERRARIA_GETRAINBOWROD");
+		if (player.inventory[i].name == "Hallowed Repeater") ExternalAchieve("TERRARIA_GETHALLOWEDREPEATER");
 		if (player.inventory[i].name == "Angel Wings" || player.inventory[i].name == "Demon Wings") ExternalAchieve("TERRARIA_GETWINGS");
 		if (player.inventory[i].name == "Glowing Mushroom") ExternalAchieve("TERRARIA_GLOWINGMUSHROOM");
 	}
@@ -442,10 +462,7 @@ public void UpdatePlayer(Player player) {
 	int count = 0;
 	for (int i = 40; i <= 43; i++) {
 		if (player.inventory[i] == null || player.inventory[i].name == null || player.inventory[i].name == "" || player.inventory[i].stack <= 0) continue;
-		if (player.inventory[i].name == "Copper Coin") count += player.inventory[i].stack;
-		else if (player.inventory[i].name == "Silver Coin") count += player.inventory[i].stack*100;
-		else if (player.inventory[i].name == "Gold Coin") count += player.inventory[i].stack*10000;
-		else if (player.inventory[i].name == "Platinum Coin") count += player.inventory[i].stack*1000000;
+		if (player.inventory[i].name.EndsWith(" Coin") && player.inventory[i].value >= 5) count += player.inventory[i].stack*player.inventory[i].value/5;
 	}
 	ExternalSetAchievementProgress("TERRARIA_GET10P",count);
 	
@@ -455,6 +472,7 @@ public void UpdatePlayer(Player player) {
 			ExternalAchievementProgress("TERRARIA_TOTALMOVE10K",dist);
 			ExternalAchievementProgress("TERRARIA_TOTALMOVE100K",dist);
 			ExternalAchievementProgress("TERRARIA_TOTALMOVE1M",dist);
+			ExternalAchievementProgress("TERRARIA_TOTALMOVE10M",dist);
 		}
 	}
 	lastPos = new Vector2(player.position.X,player.position.Y);
@@ -475,6 +493,9 @@ public void UpdatePlayer(Player player) {
 		if (Main.npc[i].name == "Wizard") ExternalAchieve("TERRARIA_NPC_WIZARD");
 		if (Main.npc[i].name == "Santa Claus") ExternalAchieve("TERRARIA_NPC_SANTACLAUS");
 	}
+	
+	if (!IsBlankItem(lastReforgeItem) && !IsBlankItem(Main.reforgeItem) && lastReforgeItem.name == Main.reforgeItem.name && Main.mouseReforge && lastReforgeItem.prefix != Main.reforgeItem.prefix) ExternalAchieve("TERRARIA_REFORGE");
+	lastReforgeItem = Main.reforgeItem.CloneItem();
 }
 
 public void CheckAcMismatched(Player player) {

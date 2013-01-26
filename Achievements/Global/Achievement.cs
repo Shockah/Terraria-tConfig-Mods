@@ -40,6 +40,7 @@ public class Achievement {
 	public Func<object,object,string> progressParser = defaultProgressParser;
 	
 	public bool achieved = false;
+	public List<Achievement> sub = new List<Achievement>();
 	
 	public Achievement(string apiName, string category, string title, string description, string parent, int value = 10, Texture2D tex = null, bool hidden = false) {
 		this.apiName = apiName;
@@ -127,6 +128,7 @@ public class Achievement {
 		Color orange = new Color(255,127,0,191);
 		
 		float progress = GetProgress();
+		if (achieved) progress = 1f;
 		Color c = achieved ? limish : white;
 		
 		if (progress <= 0f || progress >= 1f) {
@@ -157,5 +159,7 @@ public class Achievement {
 		ModWorld.DrawStringShadowed(sb,Main.fontMouseText,""+value,new Vector2(xx+ww-12-Main.fontMouseText.MeasureString(""+value).X,yy+16),Color.White,Color.Black);
 		
 		yy += 56;
+		
+		for (int i = 0; i < sub.Count; i++) sub[i].Draw(sb,xx+24,ref yy,ww-48);
 	}
 }
