@@ -14,7 +14,6 @@ public static Item[][] accessories;
 
 public void Initialize(int modId) {
 	ModWorld.modId = modId;
-	if (!Main.dedServ) return;
 	Init();
 }
 public static void Init() {
@@ -41,9 +40,11 @@ public static void Init() {
 }
 
 public void PlayerConnected(int playerID) {
+	accessories[playerID] = new Item[ModGeneric.extraSlots];
+	for (int i = 0; i < accessories[playerID].Length; i++) accessories[playerID][i] = new Item();
+	
 	foreach (Player player in Main.player) {
 		if (player == null || !player.active || player.name == "") continue;
-		if (playerID == player.whoAmi) continue;
 		
 		MemoryStream ms = new MemoryStream();
 		BinaryWriter bw = new BinaryWriter(ms);
@@ -64,6 +65,8 @@ public void NetReceive(int messageType, BinaryReader br) {
 		switch (messageType) {
 			case MSG_ITEM: {
 				int playerID = br.ReadByte();
+				if (playerID == Main.myPlayer) break;
+				
 				int slot = br.ReadByte();
 				accessories[playerID][slot].RunMethod("OnUnequip",Main.player[playerID],-slot-1);
 				accessories[playerID][slot] = ItemLoad(br);
@@ -71,6 +74,8 @@ public void NetReceive(int messageType, BinaryReader br) {
 			} break;
 			case MSG_ITEMPACK: {
 				int playerID = br.ReadByte();
+				if (playerID == Main.myPlayer) break;
+				
 				for (int i = 0; i < ModGeneric.extraSlots; i++) {
 					accessories[playerID][i].RunMethod("OnUnequip",Main.player[playerID],-i-1);
 					accessories[playerID][i] = ItemLoad(br);
@@ -82,7 +87,7 @@ public void NetReceive(int messageType, BinaryReader br) {
 				BinaryWriter bw = new BinaryWriter(ms);
 				
 				bw.Write((byte)Main.myPlayer);
-				foreach (Item item in accessories[Main.myPlayer]) ItemSave(bw,item);
+				for (int i = 0; i < ModPlayer.accessories.Length; i++) ItemSave(bw,ModPlayer.accessories[i]);
 				
 				byte[] data = ms.ToArray();
 				object[] toSend = new object[data.Length];
@@ -124,7 +129,7 @@ public void NetReceive(int messageType, BinaryReader br) {
 				BinaryWriter bw = new BinaryWriter(ms);
 				
 				bw.Write((byte)playerID);
-				foreach (Item item in accessories[playerID]) ItemSave(bw,item);
+				for (int i = 0; i < accessories[playerID].Length; i++) ItemSave(bw,accessories[playerID][i]);
 				
 				byte[] data = ms.ToArray();
 				object[] toSend = new object[data.Length];
@@ -238,8 +243,8 @@ public static void ExternalInitAchievementsDelegates(
 	
 	string s, cat;
 	
-	cat = "Shockah's mods->Accessory Slots+";
-	s = "SHK_AS+_OVERKILL"; AddAchievement(s,cat,"Overkill!","Have an accessory equipped in each accessory slot.",null,20,Main.itemTexture[Config.itemDefs.byName["Anklet of the Wind"].type],false);
+	cat = "";
+	s = "SHK_AS+_OVERKILL"; AddAchievement(s,cat,"Overkill!","Have an accessory equipped in each accessory slot.","TERRARIA_GETACC",20,Main.itemTexture[Config.itemDefs.byName["Anklet of the Wind"].type],false);
 }
 
 public static int ExternalGetNumAccessorySlots() {

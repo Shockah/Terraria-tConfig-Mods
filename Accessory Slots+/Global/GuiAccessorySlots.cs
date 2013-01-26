@@ -6,7 +6,7 @@ public class GuiAccessorySlots : Interfaceable {
 		if (slot == 0) {
 			swap = Main.inventoryBack5Texture;
 			swapScale = Main.inventoryScale;
-			for (int i = 0; i < ModGeneric.extraSlots; i++) ModWorld.gui.itemSlots[i] = ModWorld.accessories[Main.myPlayer][i];
+			for (int i = 0; i < ModGeneric.extraSlots; i++) ModWorld.gui.itemSlots[i] = ModPlayer.accessories[i];
 		}
 		
 		if (slot != ModGeneric.extraSlots) ModWorld.gui.slotLocation[slot].X = Main.screenWidth-139-slot/3*48;
@@ -15,7 +15,7 @@ public class GuiAccessorySlots : Interfaceable {
 		Main.inventoryScale = slot == ModGeneric.extraSlots ? swapScale : .85f;
 		
 		if (slot == ModGeneric.extraSlots) {
-			for (int i = 0; i < ModGeneric.extraSlots; i++) ModWorld.accessories[Main.myPlayer][i] = ModWorld.gui.itemSlots[i];
+			for (int i = 0; i < ModGeneric.extraSlots; i++) ModPlayer.accessories[i] = ModWorld.gui.itemSlots[i];
 		}
 		return true;
 	}
@@ -37,7 +37,7 @@ public class GuiAccessorySlots : Interfaceable {
 		
 		bw.Write((byte)Main.myPlayer);
 		bw.Write((byte)slot);
-		ItemSave(bw,accessories[Main.myPlayer][slot]);
+		ItemSave(bw,ModWorld.gui.itemSlots[slot]);
 		
 		byte[] data = ms.ToArray();
 		object[] toSend = new object[data.Length];

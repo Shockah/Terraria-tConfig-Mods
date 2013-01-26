@@ -1,18 +1,23 @@
 public static int[] MUSIC_BOXES = new int[]{-1,0,1,2,4,5,-1,6,7,9,8,11,10,12};
+public static Item[] accessories;
 
 public void Initialize() {
-	if (!Main.dedServ) ModWorld.Init();
+	accessories = new Item[ModGeneric.extraSlots];
+	for (int i = 0; i < accessories.Length; i++) accessories[i] = new Item();
 }
 
 public void Save(BinaryWriter bw) {
 	if (Main.creatingChar) {
 		for (int i = 0; i < ModGeneric.extraSlots; i++) ModWorld.ItemSave(bw,new Item());
 	} else {
-		for (int i = 0; i < ModGeneric.extraSlots; i++) ModWorld.ItemSave(bw,ModWorld.accessories[Main.myPlayer][i]);
+		for (int i = 0; i < ModGeneric.extraSlots; i++) ModWorld.ItemSave(bw,accessories[i]);
 	}
 }
 public void Load(BinaryReader br, int version) {
-	for (int i = 0; i < ModGeneric.extraSlots; i++) ModWorld.accessories[Main.myPlayer][i] = ModWorld.ItemLoad(br);
+	Initialize();
+	try {
+		for (int i = 0; i < ModGeneric.extraSlots; i++) accessories[i] = ModWorld.ItemLoad(br);
+	} catch (Exception) {}
 }
 
 public static void ExternalInitAchievementsDelegates(
@@ -39,7 +44,7 @@ public bool CheckAchievement(Player player) {
 	if (ModWorld.AcAchieve == null) return false;
 	
 	for (int i = 3; i <= 7; i++) if (ModWorld.IsBlankItem(player.armor[i])) return false;
-	for (int i = 0; i < ModGeneric.extraSlots; i++) if (ModWorld.IsBlankItem(ModWorld.accessories[player.whoAmi][i])) return false;
+	for (int i = 0; i < ModGeneric.extraSlots; i++) if (ModWorld.IsBlankItem(accessories[i])) return false;
 	ModWorld.AcAchieve("SHK_AS+_OVERKILL",null);
 	return true;
 }
@@ -49,7 +54,7 @@ public void UpdatePlayer(Player player) {
 	if (player.whoAmi == Main.myPlayer) CheckAchievement(player);
 	
 	for (int i = 0; i < ModGeneric.extraSlots; i++) {
-		Item acc = ModWorld.accessories[player.whoAmi][i];
+		Item acc = player.whoAmi == Main.myPlayer ? accessories[i] : ModWorld.accessories[player.whoAmi][i];
 		if (ModWorld.IsBlankItem(acc)) continue;
 		
 		player.statDefense += acc.defense;
@@ -123,15 +128,15 @@ public void UpdatePlayer(Player player) {
 			} break;
 			default: {
 				if (Main.myPlayer == player.whoAmi) {
-					if (acc.type == 576 && Main.rand.Next(18000) == 0 && Main.curMusic > 0) {
-						int mus = Main.curMusic <= MUSIC_BOXES.Length-1 ? MUSIC_BOXES[Main.curMusic] : -1;
-						ModWorld.accessories[player.whoAmi][i].SetDefaults(562+mus,false);
+					if (acc.type == 576 && Main.rand.Next(18000) == 0 && !(Main.curMusic is SoundHandler.MusicVanilla) || (Main.curMusic is SoundHandler.MusicVanilla && ((SoundHandler.MusicVanilla)Main.curMusic).ID == 0)) {
+						int mus = ((SoundHandler.MusicVanilla)Main.curMusic).ID <= MUSIC_BOXES.Length-1 ? MUSIC_BOXES[((SoundHandler.MusicVanilla)Main.curMusic).ID] : -1;
+						acc.SetDefaults(562+mus,false);
 						
 						MemoryStream ms = new MemoryStream();
 						BinaryWriter bw = new BinaryWriter(ms);
 						
 						bw.Write((byte)player.whoAmi);
-						ModWorld.ItemSave(bw,ModWorld.accessories[player.whoAmi][i]);
+						ModWorld.ItemSave(bw,acc);
 						
 						byte[] data = ms.ToArray();
 						object[] toSend = new object[data.Length];
@@ -146,7 +151,7 @@ public void UpdatePlayer(Player player) {
 }
 
 public void PostKill(Player player, double dmg, int hitDirection, bool pvp, string deathText) {
-	Item[] items = ModWorld.accessories[player.whoAmi];
+	Item[] items = player.whoAmi == Main.myPlayer ? accessories : ModWorld.accessories[player.whoAmi];
 	if (player.difficulty > 0) {
 		for (int i = 0; i < items.Length; i++) {
 			if (!ModWorld.IsBlankItem(items[i])) {
