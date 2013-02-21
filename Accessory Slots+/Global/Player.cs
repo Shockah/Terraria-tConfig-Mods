@@ -126,25 +126,41 @@ public void UpdatePlayer(Player player) {
 				player.manaFlower = true;
 				player.manaCost -= .08f;
 			} break;
-			default: {
-				if (Main.myPlayer == player.whoAmi) {
-					if (acc.type == 576 && Main.rand.Next(18000) == 0 && !(Main.curMusic is SoundHandler.MusicVanilla) || (Main.curMusic is SoundHandler.MusicVanilla && ((SoundHandler.MusicVanilla)Main.curMusic).ID == 0)) {
-						int mus = ((SoundHandler.MusicVanilla)Main.curMusic).ID <= MUSIC_BOXES.Length-1 ? MUSIC_BOXES[((SoundHandler.MusicVanilla)Main.curMusic).ID] : -1;
-						acc.SetDefaults(562+mus,false);
-						
-						MemoryStream ms = new MemoryStream();
-						BinaryWriter bw = new BinaryWriter(ms);
-						
-						bw.Write((byte)player.whoAmi);
-						ModWorld.ItemSave(bw,acc);
-						
-						byte[] data = ms.ToArray();
-						object[] toSend = new object[data.Length];
-						for (int j = 0; j < data.Length; j++) toSend[j] = data[j];
-						NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_ITEM,-1,-1,toSend);
-					}
-					if (acc.type >= 562 && acc.type <= 574) Main.musicBox2 = acc.type-562;
+			case 576: {
+				if (Main.myPlayer != player.whoAmi || Main.rand.Next(18000) != 0 || !(Main.curMusic is SoundHandler.MusicVanilla) || (Main.curMusic is SoundHandler.MusicVanilla && ((SoundHandler.MusicVanilla)Main.curMusic).ID == 0)) break;
+
+				int ArmourType = 0;
+				switch (((SoundHandler.MusicVanilla)Main.curMusic).ID) {
+					case 1: ArmourType = 0; break;
+					case 2: ArmourType = 1; break;
+					case 3: ArmourType = 2; break;
+					case 4: ArmourType = 4; break;
+					case 5: ArmourType = 5; break;
+					case 7: ArmourType = 6; break;
+					case 8: ArmourType = 7; break;
+					case 9: ArmourType = 9; break;
+					case 10: ArmourType = 8; break;
+					case 11: ArmourType = 11; break;
+					case 12: ArmourType = 10; break;
+					case 13: ArmourType = 12; break;
+					default: break;
 				}
+				
+				acc.SetDefaults(ArmourType+562,false);
+				
+				MemoryStream ms = new MemoryStream();
+				BinaryWriter bw = new BinaryWriter(ms);
+				
+				bw.Write((byte)player.whoAmi);
+				ModWorld.ItemSave(bw,acc);
+				
+				byte[] data = ms.ToArray();
+				object[] toSend = new object[data.Length];
+				for (int j = 0; j < data.Length; j++) toSend[j] = data[j];
+				NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_ITEM,-1,-1,toSend);
+			} break;
+			default: {
+				if (acc.type >= 562 && acc.type <= 574) Main.musicBox2 = acc.type-562;
 			} break;
 		}
 	}

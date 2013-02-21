@@ -210,7 +210,7 @@ public static void ItemMouseText(Item item) {
 	Config.mainInstance.MouseText(tip,item.rare,0);
 }
 
-public bool PreDrawInterface(SpriteBatch sb) {
+public void PreDrawInterface(SpriteBatch sb) {
 	Player player = Main.player[Main.myPlayer];
 	
 	if (resetChat) Main.chatMode = false;
@@ -251,8 +251,6 @@ public bool PreDrawInterface(SpriteBatch sb) {
 		sb.Draw(texMisc,v,GetTexRectangle(texMisc),c,0f,default(Vector2),1f,SpriteEffects.None,0f);
 		xx += texMisc.Width+2;
 	}
-	
-	return true;
 }
 public void PostDraw(SpriteBatch sb) {
 	if (Config.tileInterface != null && Config.tileInterface.code is GuiCheat) {

@@ -8,7 +8,7 @@ public const int
 private static readonly Vector2[] shadowOffset = {new Vector2(-1,-1),new Vector2(1,-1),new Vector2(-1,1),new Vector2(1,1)};
 private static Texture2D texBar, texBar2, texPBar, texBarBorder, texBarBorder2, texPBarBorder;
 
-public static void Initialize() {
+public void Initialize(int modId) {
 	switch (ModGeneric.InterfaceType) {
 		case INTERFACE_SAO: case INTERFACE_SAO_TEXT: {
 			texBar = Main.goreTexture[Config.goreID["SAOBar"]];
@@ -31,7 +31,7 @@ public static void Initialize() {
 	}
 }
 
-public static bool PreDrawLifeHearts(SpriteBatch sb) {
+public bool PreDrawLifeHearts(SpriteBatch sb) {
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	
@@ -172,7 +172,7 @@ public static bool PreDrawLifeHearts(SpriteBatch sb) {
 	return false;
 }
 
-public static bool PreDrawManaStars(SpriteBatch sb) {
+public bool PreDrawManaStars(SpriteBatch sb) {
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	
@@ -221,7 +221,7 @@ public static bool PreDrawManaStars(SpriteBatch sb) {
 	return false;
 }
 
-public static bool PreDrawBuffsList(SpriteBatch sb) {
+public bool PreDrawBuffsList(SpriteBatch sb) {
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	
@@ -243,7 +243,7 @@ public static bool PreDrawBuffsList(SpriteBatch sb) {
 	
 	return false;
 }
-public static bool PreDrawInformationTexts(SpriteBatch sb) {
+public bool PreDrawInformationTexts(SpriteBatch sb) {
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	
@@ -261,7 +261,7 @@ public static bool PreDrawInformationTexts(SpriteBatch sb) {
 	
 	return false;
 }
-public static bool PreDrawLifeText(SpriteBatch sb) {
+public bool PreDrawLifeText(SpriteBatch sb) {
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	
@@ -335,7 +335,7 @@ public static bool PreDrawLifeText(SpriteBatch sb) {
 	
 	return false;
 }
-public static bool PreDrawManaText(SpriteBatch sb) {
+public bool PreDrawManaText(SpriteBatch sb) {
 	return false;
 }
 

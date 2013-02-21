@@ -169,26 +169,6 @@ public static Item ItemLoad(BinaryReader br) {
 public static bool IsBlankItem(Item item) {
 	return item == null || item.type == 0 || item.name == null || item.name == "" || item.name == "Unloaded Item" || item.stack <= 0;
 }
-public static Item CloneItem(Item item) {
-	Item ret = new Item();
-	if (IsBlankItem(item)) return ret;
-	
-	ret.SetDefaults(item.type);
-	ret.stack = item.stack;
-	ret.Prefix(item.prefix);
-	
-	MemoryStream ms = new MemoryStream();
-	BinaryWriter bw = new BinaryWriter(ms);
-	Prefix.SavePrefix(bw,item);
-	Codable.SaveCustomData(item,bw);
-	
-	ms.Seek(0,SeekOrigin.Begin);
-	BinaryReader br = new BinaryReader(ms);
-	Prefix.LoadPrefix(br,ret,"player");
-	Codable.LoadCustomData(ret,br,5,true);
-	
-	return ret;
-}
 
 public bool PreDrawPlayerEquipment(SpriteBatch sb) {
 	if (!Main.playerInventory || Config.mainInstance.showNPCs) return true;
@@ -216,7 +196,7 @@ public void PostDraw(SpriteBatch sb) {
 public static void ItemMouseText(Item item) {
 	if (item == null || item.type == 0) return;
 	string tip = item.name;
-	Main.toolTip = CloneItem(item);
+	Main.toolTip = item.CloneItem();
 	
 	if (item.stack > 1) tip += " ("+item.stack+")";
 	Config.mainInstance.MouseText(tip,item.rare,0);

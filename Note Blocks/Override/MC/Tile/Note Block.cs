@@ -32,7 +32,7 @@ public void Play(int x, int y) {
 	if (Main.netMode == 2) return;
 	
 	float level = 1f/12f*((noteLevel%12));
-	PlaySound(x*16,y*16,soundHandler.soundID[GetSoundName(noteLevel)],level);
+	PlaySound(x*16,y*16,SoundHandler.soundID[GetSoundName(noteLevel)],level);
 	
 	float hue = 1f/3f;
 	hue -= noteLevel/24f;

@@ -479,12 +479,6 @@ public class GuiPrefix : GuiCheat {
 		Item item = Config.tileInterface.itemSlots[slot];
 		if (ModWorld.IsBlankItem(item)) {
 			Refill(slot);
-		} else {
-			if (ModWorld.IsBlankItem(Main.mouseItem)) {
-				if (!ModWorld.IsBlankItem(item)) {
-					item.stack = item.maxStack;
-				}
-			}
 		}
 		
 		Main.inventoryBack5Texture = slot == Config.tileInterface.itemSlots.Length-1 ? swap : Main.inventoryBack5Texture;
