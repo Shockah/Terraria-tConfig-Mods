@@ -156,6 +156,7 @@ public static object[] ExternalGetAchievementProgress(string apiName) {
 }
 public static bool ExternalSetAchievementProgress(string apiName, object value, Texture2D tex = null) {
 	foreach (Achievement ac in achievements) if (ac.apiName == apiName) {
+		if (ac.achieved) return false;
 		ac.progress = value;
 		if (ac.progress == null) return false;
 		else if (ac.progress is double) {

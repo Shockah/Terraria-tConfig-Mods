@@ -48,7 +48,7 @@ public class GuiAchievements {
 		for (int i = 0; i < achievements.Count; i++) achievements[i].Draw(sb,guiX,ref yy,guiW-32);
 		
 		sb.End();
-		sb.Begin();
+		sb.Begin(SpriteSortMode.Immediate,BlendState.NonPremultiplied);
 		
 		int hMax = yy-yStart, scrollMax = hMax-guiH;
 		if (scrollMax < 0) scrollMax = 0;
@@ -56,8 +56,8 @@ public class GuiAchievements {
 		if (scroll > scrollMax) scroll = scrollMax;
 		
 		float sliderY = scrollMax == 0 ? 0f : 1f*scroll/scrollMax, sliderH = scrollMax == 0 ? 1f : 1f*guiH/hMax;
-		Rectangle rectBlack = new Rectangle(guiX+guiW-24,guiY,24,guiH); sb.Draw(whiteTex,rectBlack,Color.Silver);
-		Rectangle rectWhite = new Rectangle(guiX+guiW-22,(int)(guiY+2+(guiH-4-(guiH-4)*sliderH)*sliderY),20,(int)((guiH-4)*sliderH)); sb.Draw(whiteTex,rectWhite,Color.Black);
+		Rectangle rectBlack = new Rectangle(guiX+guiW-24,guiY,24,guiH); sb.Draw(whiteTex,rectBlack,new Color(1f,1f,1f,.75f));
+		Rectangle rectWhite = new Rectangle(guiX+guiW-22,(int)(guiY+2+(guiH-4-(guiH-4)*sliderH)*sliderY),20,(int)((guiH-4)*sliderH)); sb.Draw(whiteTex,rectWhite,new Color(0f,0f,0f,.75f));
 		
 		if (scrollDragY == -1) {
 			if (Main.mouseLeft && Main.mouseLeftRelease) {

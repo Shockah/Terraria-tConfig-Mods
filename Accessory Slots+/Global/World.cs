@@ -188,7 +188,7 @@ public void PostDraw(SpriteBatch sb) {
 		Vector2 pos = gui.slotLocation[i];
 		if (Main.mouseX >= pos.X && Main.mouseX <= pos.X+Main.inventoryBackTexture.Width*scale && Main.mouseY >= pos.Y && Main.mouseY <= pos.Y+Main.inventoryBackTexture.Height*scale) {
 			player.mouseInterface = true;
-			ItemMouseText(accessories[player.whoAmi][i]);
+			ItemMouseText(ModPlayer.accessories[i]);
 		}
 	}
 }

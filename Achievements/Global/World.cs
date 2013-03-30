@@ -1,6 +1,7 @@
 #INCLUDE "Notifier.cs"
 #INCLUDE "NPCEntry.cs"
 #INCLUDE "GuiAchievements.cs"
+#INCLUDE "OSIAchievements.cs"
 
 public const int
 	MSG_ACHIEVE = 1,
@@ -172,10 +173,10 @@ public void KillTile(int x, int y, Player player) {
 	}
 }
 
-public static void PreDrawInterface(SpriteBatch sb) {
-	for (int i = 0; i < notifiers.Count; i++) notifiers[i].Draw(sb,i);
-	GuiAchievements.Draw(sb);
+public void RegisterOnScreenInterfaces() {
+	OSIAchievements.Register();
 }
+
 public static bool PreDrawEscapeButtons(SpriteBatch sb) {
 	string s = "Achievements";
 	int xx = Main.screenWidth-226, yy = Main.screenHeight+14;
