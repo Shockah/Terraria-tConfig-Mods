@@ -361,17 +361,21 @@ public class GuiPrefix : GuiCheat {
 			if (ModWorld.MouseRegion(v,new Vector2(tex.Width,tex.Height))) {
 				Main.player[Main.myPlayer].mouseInterface = true;
 				
-				Item item = ModWorld.IsBlankItem(Config.tileInterface.itemSlots[0]) ? (def.showcaseItem == null ? null : def.showcaseItem.CloneItem()) : Config.tileInterface.itemSlots[0].CloneItem();
-				if (item != null) {
-					item.Prefix(def.prefixID);
-					ItemMouseText(item);
+				if (def.prefix.weight > 0) {
+					Item item = ModWorld.IsBlankItem(Config.tileInterface.itemSlots[0]) ? (def.showcaseItem == null ? null : def.showcaseItem.CloneItem()) : Config.tileInterface.itemSlots[0].CloneItem();
+					if (item != null) {
+						item.SetDefaults(item.name);
+						if (def.prefixID > 0) item.Prefix(def.prefixID);
+						ItemMouseText(item);
+					}
 				}
 				
 				if (Main.mouseLeft && Main.mouseLeftRelease && !blockChange) {
 					int oldPrefix = Config.tileInterface.itemSlots[0].prefix;
 					Item oldItem = Config.tileInterface.itemSlots[0].CloneItem();
 					
-					Config.tileInterface.itemSlots[0].Prefix(def.prefixID);
+					Config.tileInterface.itemSlots[0].SetDefaults(Config.tileInterface.itemSlots[0].name);
+					if (def.prefixID > 0) Config.tileInterface.itemSlots[0].Prefix(def.prefixID);
 					blockChange = true;
 					refresh = false;
 					

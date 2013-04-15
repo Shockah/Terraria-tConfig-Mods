@@ -151,6 +151,50 @@ public class GuiMisc : GuiCheat {
 		PreDrawFilter(sb,texARight,null,v+new Vector2(texALeft.Width*5,0),false);
 		PreDrawFilter(sb,texARight2,null,v+new Vector2(texALeft.Width*6,0),false);
 		PreDrawFilter(sb,texARight3,null,v+new Vector2(texALeft.Width*7,0),false);
+		
+		v += new Vector2(0,texALeft.Height*2);
+		PreDrawFilter(sb,texALeft3,null,v+new Vector2(texALeft.Width*0,0),false);
+		PreDrawFilter(sb,texALeft2,null,v+new Vector2(texALeft.Width*1,0),false);
+		PreDrawFilter(sb,texALeft,null,v+new Vector2(texALeft.Width*2,0),false);
+		string hpText = ""+Main.player[Main.myPlayer].statLife;
+		measure = Main.fontMouseText.MeasureString(hpText);
+		DrawStringShadowed(sb,Main.fontMouseText,hpText,v+new Vector2(texALeft.Width*4,0)+new Vector2(-measure.X/2f,2f),Color.White,Color.Black);
+		PreDrawFilter(sb,texARight,null,v+new Vector2(texALeft.Width*5,0),false);
+		PreDrawFilter(sb,texARight2,null,v+new Vector2(texALeft.Width*6,0),false);
+		PreDrawFilter(sb,texARight3,null,v+new Vector2(texALeft.Width*7,0),false);
+		
+		v += new Vector2(0,texALeft.Height);
+		PreDrawFilter(sb,texALeft3,null,v+new Vector2(texALeft.Width*0,0),false);
+		PreDrawFilter(sb,texALeft2,null,v+new Vector2(texALeft.Width*1,0),false);
+		PreDrawFilter(sb,texALeft,null,v+new Vector2(texALeft.Width*2,0),false);
+		hpText = ""+Main.player[Main.myPlayer].statLifeMax;
+		measure = Main.fontMouseText.MeasureString(hpText);
+		DrawStringShadowed(sb,Main.fontMouseText,hpText,v+new Vector2(texALeft.Width*4,0)+new Vector2(-measure.X/2f,2f),Color.White,Color.Black);
+		PreDrawFilter(sb,texARight,null,v+new Vector2(texALeft.Width*5,0),false);
+		PreDrawFilter(sb,texARight2,null,v+new Vector2(texALeft.Width*6,0),false);
+		PreDrawFilter(sb,texARight3,null,v+new Vector2(texALeft.Width*7,0),false);
+		
+		v += new Vector2(0,texALeft.Height*1.5f);
+		PreDrawFilter(sb,texALeft3,null,v+new Vector2(texALeft.Width*0,0),false);
+		PreDrawFilter(sb,texALeft2,null,v+new Vector2(texALeft.Width*1,0),false);
+		PreDrawFilter(sb,texALeft,null,v+new Vector2(texALeft.Width*2,0),false);
+		string mpText = ""+Main.player[Main.myPlayer].statMana;
+		measure = Main.fontMouseText.MeasureString(mpText);
+		DrawStringShadowed(sb,Main.fontMouseText,mpText,v+new Vector2(texALeft.Width*4,0)+new Vector2(-measure.X/2f,2f),Color.White,Color.Black);
+		PreDrawFilter(sb,texARight,null,v+new Vector2(texALeft.Width*5,0),false);
+		PreDrawFilter(sb,texARight2,null,v+new Vector2(texALeft.Width*6,0),false);
+		PreDrawFilter(sb,texARight3,null,v+new Vector2(texALeft.Width*7,0),false);
+		
+		v += new Vector2(0,texALeft.Height);
+		PreDrawFilter(sb,texALeft3,null,v+new Vector2(texALeft.Width*0,0),false);
+		PreDrawFilter(sb,texALeft2,null,v+new Vector2(texALeft.Width*1,0),false);
+		PreDrawFilter(sb,texALeft,null,v+new Vector2(texALeft.Width*2,0),false);
+		mpText = ""+Main.player[Main.myPlayer].statManaMax;
+		measure = Main.fontMouseText.MeasureString(mpText);
+		DrawStringShadowed(sb,Main.fontMouseText,mpText,v+new Vector2(texALeft.Width*4,0)+new Vector2(-measure.X/2f,2f),Color.White,Color.Black);
+		PreDrawFilter(sb,texARight,null,v+new Vector2(texALeft.Width*5,0),false);
+		PreDrawFilter(sb,texARight2,null,v+new Vector2(texALeft.Width*6,0),false);
+		PreDrawFilter(sb,texARight3,null,v+new Vector2(texALeft.Width*7,0),false);
 	}
 	public void PreDrawFilter(SpriteBatch sb, Texture2D tex, Texture2D tex2, Vector2 v, bool value) {
 		PreDrawFilter(sb,tex,tex2,1,0,v,value);
@@ -270,8 +314,12 @@ public class GuiMisc : GuiCheat {
 			}
 		}
 		
+		Player p = Main.player[Main.myPlayer];
+		int oldI, max;
+		
 		v += new Vector2(0,texNPCBlank2.Height*3);
 		b = false;
+		oldI = Main.dayRate;
 		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*0,texALeft.Height*0),false,"-25 day rate")) {
 			Main.dayRate -= 25;
 			b = true;
@@ -284,7 +332,6 @@ public class GuiMisc : GuiCheat {
 			Main.dayRate--;
 			b = true;
 		}
-		
 		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*5,texALeft.Height*0),false,"+1 day rate")) {
 			Main.dayRate++;
 			b = true;
@@ -297,20 +344,170 @@ public class GuiMisc : GuiCheat {
 			Main.dayRate += 25;
 			b = true;
 		}
-		
 		if (b) CheatNotification.Add(new CheatNotification("time|rate","Day rate: "+Main.dayRate,30));
-		
 		if (ModWorld.MouseRegion(v,new Vector2(texALeft.Width*8,texALeft.Height))) {
 			Main.player[Main.myPlayer].mouseInterface = true;
 			if (stateOld.HasValue && state.HasValue) {
 				int mouseScrollDiff = (state.Value.ScrollWheelValue-stateOld.Value.ScrollWheelValue)/120;
 				Main.dayRate -= mouseScrollDiff;
-				if (mouseScrollDiff != 0) {
-					NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_SET_TIME,-1,-1,(int)Main.time,Main.dayTime,(byte)Main.moonPhase,Main.bloodMoon,Main.hardMode,Main.dayRate);
-					CheatNotification.Add(new CheatNotification("time|rate","Day rate: "+Main.dayRate,30));
-				}
+				if (mouseScrollDiff != 0) CheatNotification.Add(new CheatNotification("time|rate","Day rate: "+Main.dayRate,30));
 			}
 		}
+		if (oldI != Main.dayRate) NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_SET_TIME,-1,-1,(int)Main.time,Main.dayTime,(byte)Main.moonPhase,Main.bloodMoon,Main.hardMode,Main.dayRate);
+		
+		v += new Vector2(0,texALeft.Height*2);
+		b = false;
+		oldI = p.statLife;
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*0,texALeft.Height*0),false,"1 HP")) {
+			p.statLife = 1;
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*1,texALeft.Height*0),false,"-20 HP")) {
+			p.statLife = Math.Max(p.statLife-20,1);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*2,texALeft.Height*0),false,"-1 HP")) {
+			p.statLife = Math.Max(p.statLife-1,1);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*5,texALeft.Height*0),false,"+1 HP")) {
+			p.statLife = Math.Min(p.statLife+1,p.statLifeMax2);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*6,texALeft.Height*0),false,"+20 HP")) {
+			p.statLife = Math.Min(p.statLife+20,p.statLifeMax2);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*7,texALeft.Height*0),false,""+p.statLifeMax2+" HP")) {
+			p.statLife = p.statLifeMax2;
+			b = true;
+		}
+		if (b) CheatNotification.Add(new CheatNotification("hp|current","HP: "+p.statLife,30));
+		if (ModWorld.MouseRegion(v,new Vector2(texALeft.Width*8,texALeft.Height))) {
+			Main.player[Main.myPlayer].mouseInterface = true;
+			if (stateOld.HasValue && state.HasValue) {
+				int mouseScrollDiff = (state.Value.ScrollWheelValue-stateOld.Value.ScrollWheelValue)/120;
+				p.statLife = Math.Min(Math.Max(p.statLife-mouseScrollDiff*20,1),p.statLifeMax2);
+				if (mouseScrollDiff != 0) CheatNotification.Add(new CheatNotification("hp|current","HP: "+p.statLife,30));
+			}
+		}
+		if (oldI != p.statLife) NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_STATS,-1,-1,(byte)p.whoAmi,p.statLife,p.statLifeMax,p.statMana,p.statManaMax);
+		
+		v += new Vector2(0,texALeft.Height);
+		b = false;
+		oldI = p.statLifeMax;
+		max = Codable.RunGlobalMethod("ModWorld","ExternalGetMaxHealth") ? (int)Codable.customMethodReturn : 400;
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*0,texALeft.Height*0),false,"20 max HP")) {
+			p.statLifeMax = 20;
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*1,texALeft.Height*0),false,"-20 max HP")) {
+			p.statLifeMax = Math.Max(p.statLifeMax-20,20);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*2,texALeft.Height*0),false,"-1 max HP")) {
+			p.statLifeMax = Math.Max(p.statLifeMax-1,20);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*5,texALeft.Height*0),false,"+1 max HP")) {
+			p.statLifeMax = Math.Min(p.statLifeMax+1,max);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*6,texALeft.Height*0),false,"+20 max HP")) {
+			p.statLifeMax = Math.Min(p.statLifeMax+20,max);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*7,texALeft.Height*0),false,""+max+" max HP")) {
+			p.statLifeMax = max;
+			b = true;
+		}
+		if (b) CheatNotification.Add(new CheatNotification("hp|max","HP Max: "+p.statLifeMax,30));
+		if (ModWorld.MouseRegion(v,new Vector2(texALeft.Width*8,texALeft.Height))) {
+			Main.player[Main.myPlayer].mouseInterface = true;
+			if (stateOld.HasValue && state.HasValue) {
+				int mouseScrollDiff = (state.Value.ScrollWheelValue-stateOld.Value.ScrollWheelValue)/120;
+				p.statLifeMax = Math.Min(Math.Max(p.statLifeMax-mouseScrollDiff*20,20),max);
+				if (mouseScrollDiff != 0) CheatNotification.Add(new CheatNotification("hp|max","HP Max: "+p.statLifeMax,30));
+			}
+		}
+		if (oldI != p.statLifeMax) NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_STATS,-1,-1,(byte)p.whoAmi,p.statLife,p.statLifeMax,p.statMana,p.statManaMax);
+		
+		v += new Vector2(0,texALeft.Height*1.5f);
+		b = false;
+		oldI = p.statMana;
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*0,texALeft.Height*0),false,"0 MP")) {
+			p.statMana = 0;
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*1,texALeft.Height*0),false,"-20 MP")) {
+			p.statMana = Math.Max(p.statMana-20,0);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*2,texALeft.Height*0),false,"-1 MP")) {
+			p.statMana = Math.Max(p.statMana-1,0);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*5,texALeft.Height*0),false,"+1 MP")) {
+			p.statMana = Math.Min(p.statMana+1,p.statManaMax2);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*6,texALeft.Height*0),false,"+20 MP")) {
+			p.statMana = Math.Min(p.statMana+20,p.statManaMax2);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*7,texALeft.Height*0),false,""+p.statManaMax2+" MP")) {
+			p.statMana = p.statManaMax2;
+			b = true;
+		}
+		if (b) CheatNotification.Add(new CheatNotification("mp|current","MP: "+p.statMana,30));
+		if (ModWorld.MouseRegion(v,new Vector2(texALeft.Width*8,texALeft.Height))) {
+			Main.player[Main.myPlayer].mouseInterface = true;
+			if (stateOld.HasValue && state.HasValue) {
+				int mouseScrollDiff = (state.Value.ScrollWheelValue-stateOld.Value.ScrollWheelValue)/120;
+				p.statMana = Math.Min(Math.Max(p.statMana-mouseScrollDiff*20,0),p.statManaMax2);
+				if (mouseScrollDiff != 0) CheatNotification.Add(new CheatNotification("mp|current","MP: "+p.statMana,30));
+			}
+		}
+		if (oldI != p.statMana) NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_STATS,-1,-1,(byte)p.whoAmi,p.statLife,p.statLifeMax,p.statMana,p.statManaMax);
+		
+		v += new Vector2(0,texALeft.Height);
+		b = false;
+		oldI = p.statManaMax;
+		max = Codable.RunGlobalMethod("ModWorld","ExternalGetMaxMana") ? (int)Codable.customMethodReturn : 200;
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*0,texALeft.Height*0),false,"0 max MP")) {
+			p.statManaMax = 20;
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*1,texALeft.Height*0),false,"-20 max MP")) {
+			p.statManaMax = Math.Max(p.statManaMax-20,0);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*2,texALeft.Height*0),false,"-1 max MP")) {
+			p.statManaMax = Math.Max(p.statManaMax-1,0);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*5,texALeft.Height*0),false,"+1 max MP")) {
+			p.statManaMax = Math.Min(p.statManaMax+1,max);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*6,texALeft.Height*0),false,"+20 max MP")) {
+			p.statManaMax = Math.Min(p.statManaMax+20,max);
+			b = true;
+		}
+		if (PostDrawFilter(sb,texALeft,v+new Vector2(texALeft.Width*7,texALeft.Height*0),false,""+max+" max MP")) {
+			p.statManaMax = max;
+			b = true;
+		}
+		if (b) CheatNotification.Add(new CheatNotification("mp|max","MP Max: "+p.statManaMax,30));
+		if (ModWorld.MouseRegion(v,new Vector2(texALeft.Width*8,texALeft.Height))) {
+			Main.player[Main.myPlayer].mouseInterface = true;
+			if (stateOld.HasValue && state.HasValue) {
+				int mouseScrollDiff = (state.Value.ScrollWheelValue-stateOld.Value.ScrollWheelValue)/120;
+				p.statManaMax = Math.Min(Math.Max(p.statManaMax-mouseScrollDiff*20,0),max);
+				if (mouseScrollDiff != 0) CheatNotification.Add(new CheatNotification("mp|max","MP Max: "+p.statManaMax,30));
+			}
+		}
+		if (oldI != p.statManaMax) NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_STATS,-1,-1,(byte)p.whoAmi,p.statLife,p.statLifeMax,p.statMana,p.statManaMax);
 	}
 	public bool PostDrawFilter(SpriteBatch sb, Texture2D tex, Vector2 v, bool value, string text) {
 		bool ret = false;

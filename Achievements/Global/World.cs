@@ -203,6 +203,7 @@ public static bool PreDrawEscapeButtons(SpriteBatch sb) {
 	
 	return true;
 }
+
 public static void PostDraw(SpriteBatch sb) {
 	if (GuiAchievements.visible) Main.player[Main.myPlayer].mouseInterface = true;
 }

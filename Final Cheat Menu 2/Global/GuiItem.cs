@@ -145,7 +145,7 @@ public class GuiItem : GuiCheat {
 	public static void Refill(int slot) {
 		Item item = new Item();
 		try {
-			item = ModWorld.CloneItem(filtered[slot+scroll*ROWS].item);
+			item = filtered[slot+scroll*ROWS].item.CloneItem();
 			item.stack = item.maxStack;
 		} catch (Exception) {}
 		if (ModWorld.IsBlankItem(item)) item = new Item();

@@ -5,6 +5,7 @@
 #INCLUDE "GuiBuff.cs"
 #INCLUDE "GuiMisc.cs"
 #INCLUDE "CheatNotification.cs"
+#INCLUDE "OSICheat.cs"
 
 public const int
 	MSG_CHEAT_NOTIFICATION = 1,
@@ -12,7 +13,8 @@ public const int
 	MSG_SET_TIME = 3,
 	MSG_SWITCH_NOCLIP = 4,
 	MSG_SWITCH_GODMODE = 5,
-	MSG_SWITCH_NOSPAWNS = 6;
+	MSG_SWITCH_NOSPAWNS = 6,
+	MSG_STATS = 7;
 public static int modId;
 
 public static Texture2D
@@ -120,6 +122,13 @@ public void NetReceive(int messageType, BinaryReader br) {
 			case MSG_SWITCH_NOSPAWNS: {
 				enabledNoSpawns = !enabledNoSpawns;
 			} break;
+			case MSG_STATS: {
+				Player p = Main.player[(int)br.ReadByte()];
+				p.statLife = br.ReadInt32();
+				p.statLifeMax = br.ReadInt32();
+				p.statMana = br.ReadInt32();
+				p.statManaMax = br.ReadInt32();
+			} break;
 			default: break;
 		}
 	} else if (Main.netMode == 2) {
@@ -167,6 +176,14 @@ public void NetReceive(int messageType, BinaryReader br) {
 				enabledNoSpawns = !enabledNoSpawns;
 				NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_SWITCH_NOSPAWNS,-1,pID);
 			} break;
+			case MSG_STATS: {
+				Player p = Main.player[(int)br.ReadByte()];
+				p.statLife = br.ReadInt32();
+				p.statLifeMax = br.ReadInt32();
+				p.statMana = br.ReadInt32();
+				p.statManaMax = br.ReadInt32();
+				NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_STATS,-1,p.whoAmi,(byte)p.whoAmi,p.statLife,p.statLifeMax,p.statMana,p.statManaMax);
+			} break;
 			default: break;
 		}
 	}
@@ -174,26 +191,6 @@ public void NetReceive(int messageType, BinaryReader br) {
 
 public static bool IsBlankItem(Item item) {
 	return item == null || item.type == 0 || item.name == null || item.name == "" || item.name == "Unloaded Item" || item.stack <= 0;
-}
-public static Item CloneItem(Item item) {
-	Item ret = new Item();
-	if (IsBlankItem(item)) return ret;
-	
-	ret.SetDefaults(item.name);
-	ret.stack = item.stack;
-	ret.Prefix(item.prefix);
-	
-	MemoryStream ms = new MemoryStream();
-	BinaryWriter bw = new BinaryWriter(ms);
-	Prefix.SavePrefix(bw,item);
-	Codable.SaveCustomData(item,bw);
-	
-	ms.Seek(0,SeekOrigin.Begin);
-	BinaryReader br = new BinaryReader(ms);
-	Prefix.LoadPrefix(br,ret,"player");
-	Codable.LoadCustomData(ret,br,5,true);
-	
-	return ret;
 }
 
 public static void MouseText(String text) {
@@ -204,53 +201,15 @@ public static void MouseText(String text) {
 public static void ItemMouseText(Item item) {
 	if (item == null || item.type == 0) return;
 	string tip = item.name;
-	Main.toolTip = CloneItem(item);
+	Main.toolTip = (Item)item.ShallowClone();
+	Main.buffString = "";
 	
 	if (item.stack > 1) tip += " ("+item.stack+")";
 	Config.mainInstance.MouseText(tip,item.rare,0);
 }
 
-public void PreDrawInterface(SpriteBatch sb) {
-	Player player = Main.player[Main.myPlayer];
-	
-	if (resetChat) Main.chatMode = false;
-	resetChat = false;
-	
-	if (Config.tileInterface != null && Config.tileInterface.code is GuiCheat) {
-		Config.tileInterface.SetLocation(new Vector2(player.position.X/16f,player.position.Y/16f));
-		((GuiCheat)Config.tileInterface.code).PreDrawInterface(sb);
-	}
-	
-	if (Main.playerInventory) {
-		Color c;
-		Vector2 v;
-		int xx = 0;
-		
-		c = Config.tileInterface != null && Config.tileInterface.code is GuiItem ? Color.White : Color.Gray;
-		v = new Vector2(8+xx,Main.screenHeight-8-texItem.Height);
-		sb.Draw(texItem,v,GetTexRectangle(texItem),c,0f,default(Vector2),1f,SpriteEffects.None,0f);
-		xx += texItem.Width+2;
-		
-		c = Config.tileInterface != null && Config.tileInterface.code is GuiPrefix ? Color.White : Color.Gray;
-		v = new Vector2(8+xx,Main.screenHeight-8-texPrefix.Height);
-		sb.Draw(texPrefix,v,GetTexRectangle(texPrefix),c,0f,default(Vector2),1f,SpriteEffects.None,0f);
-		xx += texPrefix.Width+2;
-		
-		c = Config.tileInterface != null && Config.tileInterface.code is GuiNPC ? Color.White : Color.Gray;
-		v = new Vector2(8+xx,Main.screenHeight-8-texNPC.Height);
-		sb.Draw(texNPC,v,GetTexRectangle(texNPC),c,0f,default(Vector2),1f,SpriteEffects.None,0f);
-		xx += texNPC.Width+2;
-		
-		c = Config.tileInterface != null && Config.tileInterface.code is GuiBuff ? Color.White : Color.Gray;
-		v = new Vector2(8+xx,Main.screenHeight-8-texBuff.Height);
-		sb.Draw(texBuff,v,GetTexRectangle(texBuff),c,0f,default(Vector2),1f,SpriteEffects.None,0f);
-		xx += texBuff.Width+2;
-		
-		c = Config.tileInterface != null && Config.tileInterface.code is GuiMisc ? Color.White : Color.Gray;
-		v = new Vector2(8+xx,Main.screenHeight-8-texMisc.Height);
-		sb.Draw(texMisc,v,GetTexRectangle(texMisc),c,0f,default(Vector2),1f,SpriteEffects.None,0f);
-		xx += texMisc.Width+2;
-	}
+public void RegisterOnScreenInterfaces() {
+	OSICheat.Register();
 }
 public void PostDraw(SpriteBatch sb) {
 	if (Config.tileInterface != null && Config.tileInterface.code is GuiCheat) {
