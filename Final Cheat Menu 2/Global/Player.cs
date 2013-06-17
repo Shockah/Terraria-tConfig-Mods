@@ -20,6 +20,7 @@ public void UpdatePlayer(Player player) {
 	if (ModWorld.enabledGodmode[player.whoAmi]) {
 		player.immune = true;
 		player.immuneAlpha = 0;
+		player.breath = player.breathMax;
 	}
 	if (ModWorld.enabledAllLight) {
 		Lighting.addLight((int)(Main.player[Main.myPlayer].position.X/16),(int)(Main.player[Main.myPlayer].position.X/16),1f,1f,1f);

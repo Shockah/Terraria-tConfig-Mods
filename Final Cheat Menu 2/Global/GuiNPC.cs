@@ -423,7 +423,7 @@ public class GuiNPC : GuiCheat {
 			ModWorld.enabledNoSpawns = !ModWorld.enabledNoSpawns;
 			NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_SWITCH_NOSPAWNS,-1,-1,(byte)Main.myPlayer);
 			refresh = false;
-			CheatNotification.Add(new CheatNotification("npc|spawns","NPC spawning "+(ModWorld.enabledNoSpawns ? "on" : "off")));
+			CheatNotification.Add(new CheatNotification("npc|spawns","NPC spawning "+(ModWorld.enabledNoSpawns ? "off" : "on")));
 		}
 		
 		if (xx == 0) {

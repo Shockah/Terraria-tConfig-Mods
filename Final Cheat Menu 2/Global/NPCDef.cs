@@ -8,6 +8,6 @@ public class NPCDef {
 		categories["Town"] = npc.townNPC;
 		categories["Friendly"] = npc.friendly || (npc.damage <= 0 && npc.defDamage <= 0);
 		categories["Hostile"] = !categories["Friendly"];
-		categories["Boss"] = npc.boss;
+		categories["Boss"] = npc.boss || (npc.type >= 13 && npc.type <= 15);
 	}
 }
