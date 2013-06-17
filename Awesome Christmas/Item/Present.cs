@@ -38,7 +38,8 @@ public void Load(BinaryReader br, int version) {
 	if (gift.type != 0 && gift.stack > 0) playerName = br.ReadString();
 }
 
-public void AffixName(ref string name) {
+public void AffixName(ref string name, bool afterPrefix) {
+	if (!afterPrefix) return;
 	if (playerName != null) name += " from "+playerName;
 }
 public bool InvRightClicked(Player player, int pID, int slot) {
