@@ -93,7 +93,7 @@
 				if (tile.active && ((tile.type == 26 && tile.frameX == 0 && tile.frameY == 0) || (tile.type == 31 && tile.frameX == 0 && tile.frameY == 0))) {
 					targets.Add(new TargetTile(new Vector2(x,y)));
 				} else {
-					ModWorld.listJungleTargets.RemoveAt(i--);
+					ModWorld.listCorruptTargets.RemoveAt(i--);
 					if (Main.netMode == 2) {
 						using (MemoryStream ms = new MemoryStream())
 						using (BinaryWriter bw = new BinaryWriter(ms)) {
