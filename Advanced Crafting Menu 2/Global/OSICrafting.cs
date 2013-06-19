@@ -25,7 +25,7 @@ public class OSICrafting : OnScreenInterfaceable {
 			((GuiCraft)Config.tileInterface.code).PreDrawInterface(sb);
 		}
 		
-		if (Main.playerInventory && !ModGeneric.instaShow) {
+		if (Main.playerInventory && !ModGeneric.instaShow && (Config.tileInterface == null || Config.tileInterface is GuiCraft)) {
 			Color c = Config.tileInterface != null && Config.tileInterface.code is ModWorld.GuiCraft ? Color.White : Color.Gray;
 			sb.Draw(ModWorld.texShow,new Vector2(414,210),GetTexRectangle(texShow),c,0f,default(Vector2),1f,SpriteEffects.None,0f);
 		}
