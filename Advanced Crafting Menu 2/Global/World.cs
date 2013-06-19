@@ -1,7 +1,7 @@
 #INCLUDE "GuiCraft.cs"
 #INCLUDE "OSICrafting.cs"
 
-public static Texture2D texButton, texAUp, texAUp2, texAUp3, texADown, texADown2, texADown3;
+public static Texture2D texButton, texAUp, texAUp2, texAUp3, texADown, texADown2, texADown3, texShow;
 public static bool resetChat = false, shouldInit = true;
 
 public void Initialize(int modId) {
@@ -15,6 +15,7 @@ public static void Init() {
 	if (Main.dedServ) return;
 	
 	texButton = Main.goreTexture[Config.goreID["ACM_Button"]];
+	texShow = Main.goreTexture[Config.goreID["ACM_Show"]];
 	
 	texAUp = Main.goreTexture[Config.goreID["ACM_Arrow_Up"]];
 	texAUp2 = Main.goreTexture[Config.goreID["ACM_Arrow_Up2"]];
@@ -53,6 +54,24 @@ public void PostDraw(SpriteBatch sb) {
 			resetChat = true;
 			Main.chatMode = true;
 			Main.inputTextEnter = Main.chatRelease = false;
+		}
+	}
+	
+	if (Main.playerInventory && !ModGeneric.instaShow) {
+		Vector2 v = new Vector2(414,210);
+		if (MouseRegion(v,new Vector2(texShow.Width,texShow.Height))) {
+			Main.player[Main.myPlayer].mouseInterface = true;
+			MouseText("Advanced Crafting Menu");
+			if (Main.mouseLeft && Main.mouseLeftRelease) {
+				if (Config.tileInterface != null && Config.tileInterface.code is GuiCraft) Config.tileInterface = null;
+				else {
+					if (shouldInit) {
+						GuiCraft.Init();
+						shouldInit = false;
+					}
+					GuiCraft.Create();
+				}
+			}
 		}
 	}
 }
