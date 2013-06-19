@@ -126,8 +126,10 @@ public class EffectFireflyRainbow : EffectFireflyHover {
 	
 	public override void OnCatch(Player player) {
 		if (Main.netMode == 2 || player.whoAmi != Main.myPlayer) return;
-		ModWorld.AcAchieve("SHK_WORLDP_FLY_HOLY",null);
-		if (hueSpeed != 0) ModWorld.AcAchieve("SHK_WORLDP_FLY_HOLY2",null);
+		if (ModWorld.AcAchieve != null) {
+			ModWorld.AcAchieve("SHK_WORLDP_FLY_HOLY",null);
+			if (hueSpeed != 0) ModWorld.AcAchieve("SHK_WORLDP_FLY_HOLY2",null);
+		}
 	}
 	protected virtual string GetColorName() {
 		if (hueSpeed != 0) return "Rainbow";

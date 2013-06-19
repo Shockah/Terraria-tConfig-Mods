@@ -95,8 +95,10 @@
 	
 	public override void OnCatch(Player player) {
 		if (Main.netMode == 2 || player.whoAmi != Main.myPlayer) return;
-		ModWorld.AcAchieve("SHK_WORLDP_FLY_MOON",null);
-		if (hasRing) ModWorld.AcAchieve("SHK_WORLDP_FLY_MOON2",null);
+		if (ModWorld.AcAchieve != null) {
+			ModWorld.AcAchieve("SHK_WORLDP_FLY_MOON",null);
+			if (hasRing) ModWorld.AcAchieve("SHK_WORLDP_FLY_MOON2",null);
+		}
 	}
 	public override void AffixName(ref string name) {
 		name = (hasRing ? "Lively ": "")+"Moon "+name;

@@ -139,8 +139,10 @@
 	
 	public override void OnCatch(Player player) {
 		if (Main.netMode == 2 || player.whoAmi != Main.myPlayer) return;
-		ModWorld.AcAchieve("SHK_WORLDP_FLY_FLAME",null);
-		if (color1.G == 255) ModWorld.AcAchieve("SHK_WORLDP_FLY_FLAME2",null);
+		if (ModWorld.AcAchieve != null) {
+			ModWorld.AcAchieve("SHK_WORLDP_FLY_FLAME",null);
+			if (color1.G == 255) ModWorld.AcAchieve("SHK_WORLDP_FLY_FLAME2",null);
+		}
 	}
 	public override void AffixName(ref string name) {
 		name = (color1.G == 255 ? "Cursed " : "")+"Flame "+name;

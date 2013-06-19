@@ -135,8 +135,10 @@
 	
 	public override void OnCatch(Player player) {
 		if (Main.netMode == 2 || player.whoAmi != Main.myPlayer) return;
-		ModWorld.AcAchieve("SHK_WORLDP_FLY_CORRUPT",null);
-		if (chaos) ModWorld.AcAchieve("SHK_WORLDP_FLY_CORRUPT2",null);
+		if (ModWorld.AcAchieve != null) {
+			ModWorld.AcAchieve("SHK_WORLDP_FLY_CORRUPT",null);
+			if (chaos) ModWorld.AcAchieve("SHK_WORLDP_FLY_CORRUPT2",null);
+		}
 	}
 	public override void AffixName(ref string name) {
 		name = (chaos ? "Chaos" : "Corrupt")+" "+name;
