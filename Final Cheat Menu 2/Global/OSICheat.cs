@@ -14,7 +14,7 @@ public class OSICheat : OnScreenInterfaceable {
 			((GuiCheat)Config.tileInterface.code).PreDrawInterface(sb);
 		}
 		
-		if (Main.playerInventory) {
+		if (Main.playerInventory && GetClientAdminLevel() == 2) {
 			Color c;
 			Vector2 v;
 			int xx = 0;

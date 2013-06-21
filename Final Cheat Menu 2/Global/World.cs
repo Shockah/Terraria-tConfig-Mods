@@ -16,6 +16,7 @@ public const int
 	MSG_SWITCH_NOSPAWNS = 6,
 	MSG_STATS = 7;
 public static int modId;
+public static bool spermInstalled = false;
 
 public static Texture2D
 	texItem, texPrefix, texNPC, texBuff, texMisc,
@@ -224,7 +225,7 @@ public void PostDraw(SpriteBatch sb) {
 		}
 	}
 	
-	if (Main.playerInventory) {
+	if (Main.playerInventory && GetClientAdminLevel() == 2) {
 		Vector2 v;
 		int xx = 0;
 		
@@ -321,4 +322,12 @@ public static Rectangle? GetTexRectangle(Texture2D tex) {
 }
 public static Vector2 GetTexCenter(Texture2D tex) {
 	return new Vector2(tex.Width/2f,tex.Height/2f);
+}
+
+public static int GetClientAdminLevel() {
+	if (Codable.RunGlobalMethod("ModWorld","GetClientAdminLevelForMods")) {
+		spermInstalled = true;
+		return (int)Codable.customMethodReturn;
+	}
+	return 2;
 }

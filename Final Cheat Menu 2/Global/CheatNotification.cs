@@ -16,7 +16,7 @@ public class CheatNotification {
 		for (int i = 0; i < list.Count; i++) {
 			CheatNotification cn = list[i];
 			if (--cn.delay <= 0) {
-				NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_CHEAT_NOTIFICATION,-1,-1,(byte)Main.myPlayer,cn.message);
+				if (!ModWorld.spermInstalled) NetMessage.SendModData(ModWorld.modId,ModWorld.MSG_CHEAT_NOTIFICATION,-1,-1,(byte)Main.myPlayer,cn.message);
 				list.RemoveAt(i--);
 			}
 		}
