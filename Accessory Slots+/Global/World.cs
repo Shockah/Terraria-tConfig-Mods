@@ -235,12 +235,13 @@ public static Item[] ExternalGetAccessorySlots() {
 }
 public static Item[] ExternalGetAccessorySlotsFor(int player) {
 	if (player < 0) player = Main.myPlayer;
-	return accessories[player];
+	return player == Main.myPlayer ? ModPlayer.accessories : accessories[player];
 }
 public static void ExternalSetAccessorySlot(int slot, Item item) {
 	ExternalSetAccessorySlotFor(Main.myPlayer,slot,item);
 }
 public static void ExternalSetAccessorySlotFor(int player, int slot, Item item) {
 	if (player < 0) player = Main.myPlayer;
-	accessories[player][slot] = item;
+	Item[] acc = player == Main.myPlayer ? ModPlayer.accessories : accessories[player];
+	acc[slot] = item;
 }
