@@ -66,6 +66,7 @@
 		for (int i = 0; i < ModWorld.listJungleTargets.Count; i++) {
 			Vector2 v = ModWorld.listJungleTargets[i];
 			int x = (int)v.X, y = (int)v.Y;
+			if (Main.tile[x,y] == null) continue;
 			if (Main.netMode != -1 && !(Main.tile[x,y].active && Main.tile[x,y].type == 61 && Main.tile[x,y].frameX == 144)) {
 				ModWorld.listJungleTargets.RemoveAt(i--);
 				

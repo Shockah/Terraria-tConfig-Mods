@@ -4,7 +4,7 @@
 		TYPE_SIN2 = 1;
 	
 	public static int GetMaxCount(List<Player> players) {
-		int ret = 0, cur = 5, nextTier = 1, i = 0;
+		int ret = 0, cur = 4, nextTier = 1, i = 0;
 		foreach (Player player in players) {
 			if (!DoesFulfillSpawnConditions(player)) continue;
 			ret += cur;

@@ -78,9 +78,11 @@ public void PlayerConnected(int playerId) {
 		bw.Write(listCorruptTargets.Count);
 		foreach (Vector2 v in listCorruptTargets) NetworkHelper.Write(bw,v);
 		
-		NetworkHelper.EasySerialize(bw,effects);
+		bw.Write(effects.Count);
+		foreach (ModWorld.Effect e in effects) NetworkHelper.EasySerialize(bw,e);
 		fireflies.Save(bw);
 		
+		bw.Write(ModWorld.Effect.nextId);
 		NetworkHelper.Send(NetworkHelper.SYNCCONNECT,ms);
 	}
 }
@@ -90,6 +92,7 @@ public void NetReceive(int messageType, BinaryReader br) {
 		case 1: {
 			switch (messageType) {
 				case NetworkHelper.SYNCCONNECT: {
+					ModWorld.Init();
 					int count;
 					
 					count = br.ReadInt32();
@@ -98,8 +101,12 @@ public void NetReceive(int messageType, BinaryReader br) {
 					count = br.ReadInt32();
 					while (count-- > 0) listCorruptTargets.Add(NetworkHelper.ReadVector2(br));
 					
-					effects = (List<Effect>)NetworkHelper.EasyDeserialize(br);
+					count = br.ReadInt32();
+					effects.Clear();
+					while (count-- > 0) effects.Add((ModWorld.Effect)NetworkHelper.EasyDeserialize(br));
 					fireflies.Load(br);
+					
+					ModWorld.Effect.nextId = br.ReadInt32();
 				} break;
 				case NetworkHelper.FLYSPAWN: {
 					fireflies.CreateFirefly(br.ReadByte(),(Random)NetworkHelper.EasyDeserialize(br)).Create(NetworkHelper.ReadVector2(br));

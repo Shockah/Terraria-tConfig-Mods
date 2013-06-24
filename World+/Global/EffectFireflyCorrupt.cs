@@ -88,6 +88,7 @@
 			Vector2 v = ModWorld.listCorruptTargets[i];
 			int x = (int)v.X, y = (int)v.Y;
 			Tile tile = Main.tile[x,y];
+			if (tile == null) continue;
 			
 			if (Main.netMode != -1) {
 				if (tile.active && ((tile.type == 26 && tile.frameX == 0 && tile.frameY == 0) || (tile.type == 31 && tile.frameX == 0 && tile.frameY == 0))) {

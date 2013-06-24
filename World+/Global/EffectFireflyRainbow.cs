@@ -1,6 +1,6 @@
 public class EffectFireflyRainbow : EffectFireflyHover {
 	public static int GetMaxCount(List<Player> players) {
-		int ret = 0, cur = 5, nextTier = 1, i = 0;
+		int ret = 0, cur = 6, nextTier = 1, i = 0;
 		foreach (Player player in players) {
 			if (!DoesFulfillSpawnConditions(player)) continue;
 			ret += cur;

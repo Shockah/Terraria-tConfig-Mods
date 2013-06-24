@@ -95,7 +95,7 @@
 			}
 		}
 	}
-	protected override bool IsTileSolid(int x, int y) {
+	public override bool IsTileSolid(int x, int y) {
 		bool b = base.IsTileSolid(x,y);
 		if (inWall) {
 			if (!b) inWall = false;

@@ -71,13 +71,16 @@
 			if (y >= Main.tile.GetLength(1)) return -1;
 		}
 	}
-	protected virtual bool IsTileSolid(int x, int y) {
+	public virtual bool IsTileSolid(int x, int y) {
 		if (x < 0 || y < 0 || x > Main.tile.GetLength(0) || y > Main.tile.GetLength(1)) return false;
 		Tile tile = Main.tile[x,y];
-		return (tile.active && Main.tileSolid[tile.type]) || (tile.liquid >= 16 && tile.lava);
+		return tile != null && ((tile.active && Main.tileSolid[tile.type]) || (tile.liquid >= 16 && tile.lava));
 	}
 	
 	protected override void OnCreate() {
+		alpha = 0f;
+	}
+	public virtual void Spawn() {
 		if (Main.netMode == 2) {
 			using (MemoryStream ms = new MemoryStream())
 			using (BinaryWriter bw = new BinaryWriter(ms)) {
@@ -87,7 +90,6 @@
 				NetworkHelper.Send(NetworkHelper.FLYSPAWN,ms);
 			}
 		}
-		alpha = 0f;
 	}
 	
 	protected override void OnUpdate(List<Player> players) {

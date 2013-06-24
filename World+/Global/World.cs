@@ -19,11 +19,10 @@ public static List<Effect>
 	effectsExtraUpdate = new List<Effect>();
 public static Random rand = new Random();
 
-public static bool init = Init();
-public static TileFireflyHandler fireflies;
+public static TileFireflyHandler fireflies = new TileFireflyHandler();
 public static int tileIdFirefly;
 
-public bool isChecked;
+public static bool isChecked;
 public static List<Vector2>
 	listJungleTargets = new List<Vector2>(),
 	listCorruptTargets = new List<Vector2>(),
@@ -31,12 +30,8 @@ public static List<Vector2>
 
 public static Func<string,Texture2D,bool> AcAchieve;
 
-public static bool Init() {
+public static void Init() {
 	fireflies = new TileFireflyHandler();
-	return true;
-}
-public void Initialize(int modId) {
-	NetworkHelper.modId = modId;
 	isChecked = false;
 	
 	effects.Clear();
@@ -50,6 +45,10 @@ public void Initialize(int modId) {
 	
 	tileIdFirefly = Config.tileDefs.ID["Firefly in a Jar"];
 	fireflies.Clear();
+}
+public void Initialize(int modId) {
+	NetworkHelper.modId = modId;
+	Init();
 }
 public void OnSetup() {
 	OSIEffects.Register();
@@ -185,30 +184,48 @@ public void UpdateWorld() {
 	
 	foreach (Player player in players) {
 		if (player.zone["Hallow"] && !Main.dayTime && listRainbowflies.Count < EffectFireflyRainbow.GetMaxCount(players) && Main.rand.Next(100) == 0) {
-			new EffectFireflyRainbow(new Random(rand.Next())).Create(new Vector2(playerRand.position.X-screenW/2+rand.Next(screenW),0));
+			EffectFirefly ef = new EffectFireflyRainbow(new Random(rand.Next()));
+			for (int tries = 0; tries < 50; tries++) {
+				Vector2 v = new Vector2(player.position.X-screenW/2+rand.Next(screenW),player.position.Y-screenH/2+rand.Next(screenH));
+				if (!ef.IsTileSolid((int)(v.X/16),(int)(v.Y/16))) {
+					ef.Create(v);
+					ef.Spawn();
+					break;
+				}
+			}
 		}
 		
 		if (player.zone["Hell"] && listHellflies.Count < EffectFireflyFlame.GetMaxCount(players) && Main.rand.Next(200) == 0) {
+			EffectFirefly ef = new EffectFireflyFlame(new Random(rand.Next()));
 			for (int tries = 0; tries < 50; tries++) {
 				Vector2 v = new Vector2(player.position.X-screenW/2+rand.Next(screenW),player.position.Y-screenH/2+rand.Next(screenH));
-				Tile tile = Main.tile[(int)(v.X/16),(int)(v.Y/16)];
-				if (!tile.active) {
-					new EffectFireflyFlame(new Random(rand.Next())).Create(v);
+				if (!ef.IsTileSolid((int)(v.X/16),(int)(v.Y/16))) {
+					ef.Create(v);
+					ef.Spawn();
 					break;
 				}
 			}
 		}
 		
 		if (player.zone["Jungle"] && player.zone["RockLayer"] && listJungleflies.Count < EffectFireflyMoon.GetMaxCount(players) && Main.rand.Next(300) == 0) {
-			new EffectFireflyMoon(new Random(rand.Next())).Create(new Vector2(player.position.X-screenW/2+rand.Next(screenW),player.position.Y-screenH/2+rand.Next(screenH)));
+			EffectFirefly ef = new EffectFireflyMoon(new Random(rand.Next()));
+			for (int tries = 0; tries < 50; tries++) {
+				Vector2 v = new Vector2(player.position.X-screenW/2+rand.Next(screenW),player.position.Y-screenH/2+rand.Next(screenH));
+				if (!ef.IsTileSolid((int)(v.X/16),(int)(v.Y/16))) {
+					ef.Create(v);
+					ef.Spawn();
+					break;
+				}
+			}
 		}
 		
 		if (player.zone["Corruption"] && (player.zone["DirtLayer"] || player.zone["RockLayer"]) && listCorruptflies.Count < EffectFireflyCorrupt.GetMaxCount(players) && Main.rand.Next(250) == 0) {
+			EffectFirefly ef = new EffectFireflyCorrupt(new Random(rand.Next()));
 			for (int tries = 0; tries < 50; tries++) {
 				Vector2 v = new Vector2(player.position.X-screenW/2+rand.Next(screenW),player.position.Y-screenH/2+rand.Next(screenH));
-				Tile tile = Main.tile[(int)(v.X/16),(int)(v.Y/16)];
-				if (!tile.active && tile.wall == 3) {
-					new EffectFireflyCorrupt(new Random(rand.Next())).Create(v);
+				if (!ef.IsTileSolid((int)(v.X/16),(int)(v.Y/16))) {
+					ef.Create(v);
+					ef.Spawn();
 					break;
 				}
 			}
