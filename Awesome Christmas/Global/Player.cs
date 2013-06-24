@@ -85,7 +85,7 @@ public static void GiveItem(Player player, Item item) {
 		if (give == 0) break;
 	}
 	
-	Main.PlaySound(7,-1,-1,1);
+	if (!Main.dedServ && Main.myPlayer == player.whoAmi) Main.PlaySound(7,-1,-1,1);
 }
 
 public void Initialize() {
@@ -145,10 +145,13 @@ public void UpdatePlayer(Player player) {
 	if (player.grapCount > 0) {
 		int tileIce = Config.tileDefs.ID["Icemaw"];
 		for (int i = 0; i < player.grapCount; i++) {
+			if (player.grappling == null) break;
 			if (player.grappling[i] < 0) continue;
 			
 			Projectile proj = Main.projectile[player.grappling[i]];
+			if (proj == null) continue;
 			int xx = (int)((proj.position.X+proj.width/2f)/16f), yy = (int)((proj.position.Y+proj.height/2f)/16f);
+			if (Main.tile[xx,yy] == null) continue;
 			if (xx >= 0 && xx < Main.maxTilesX && yy >= 0 && yy < Main.maxTilesY && Main.tile[xx,yy].active && Main.tile[xx,yy].type == tileIce) {
 				for (int j = i; j < player.grapCount-1; j++) player.grappling[j] = player.grappling[j+1];
 				player.grappling[player.grapCount-1] = -1;

@@ -552,7 +552,7 @@ public void NPCLoot()
 	ModWorld.flagFrostmaw = true;
 	Item.NewItem((int)npc.position.X,(int)npc.position.Y,npc.width,npc.height,"Frozen Shard",Main.rand.Next(1,3),false,0);
 	
-	ModWorld.AcAchieve("SHK_XMAS_ROSEMAW",null);
+	if (ModWorld.AcAchieve != null) ModWorld.AcAchieve("SHK_XMAS_ROSEMAW",null);
 }
 
 

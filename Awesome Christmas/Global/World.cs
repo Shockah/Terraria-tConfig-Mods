@@ -257,7 +257,7 @@ public void NetReceive(int messageType, BinaryReader br) {
 				for (int i = 0; i < Main.player.Length; i++) {
 					Player player = Main.player[i];
 					if (player == null || !player.active || player.name == "") continue;
-					if (player.name == playerName) AcAchievePlayer(i,"SHK_XMAS_PRESENT");
+					if (player.name == playerName && AcAchievePlayer != null) AcAchievePlayer(i,"SHK_XMAS_PRESENT");
 				}
 			} break;
 			default: break;

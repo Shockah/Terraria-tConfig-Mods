@@ -670,7 +670,7 @@ public void NPCLoot()
 	if (!ModWorld.flagFrostmaw) Item.NewItem((int)npc.position.X,(int)npc.position.Y,npc.width,npc.height,"Divine Stone of Returning Soul",1,false,0);
 	ModWorld.flagFrostmaw = true;
 	
-	ModWorld.AcAchieve("SHK_XMAS_FROSTMAW",null);
+	if (ModWorld.AcAchieve != null) ModWorld.AcAchieve("SHK_XMAS_FROSTMAW",null);
 }
 
 
