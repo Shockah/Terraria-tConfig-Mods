@@ -327,7 +327,7 @@ public static Vector2 GetTexCenter(Texture2D tex) {
 public static int GetClientAdminLevel() {
 	if (Codable.RunGlobalMethod("ModWorld","GetClientAdminLevelForMods")) {
 		spermInstalled = true;
-		return (int)Codable.customMethodReturn;
+		return Main.netMode == 0 ? 2 : (int)Codable.customMethodReturn;
 	}
 	return 2;
 }

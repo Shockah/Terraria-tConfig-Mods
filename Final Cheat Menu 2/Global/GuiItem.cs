@@ -86,7 +86,6 @@ public class GuiItem : GuiCheat {
 		foreach (string str in extraItems) {
 			Item item = new Item();
 			item.SetDefaults(str);
-			Main.NewText(item.name);
 			if (ModWorld.IsBlankItem(item)) continue;
 			allDefs.Add(new ItemDef(item));
 			
