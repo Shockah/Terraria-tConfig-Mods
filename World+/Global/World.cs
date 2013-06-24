@@ -186,7 +186,7 @@ public void UpdateWorld() {
 		if (player.zone["Hallow"] && !Main.dayTime && listRainbowflies.Count < EffectFireflyRainbow.GetMaxCount(players) && Main.rand.Next(100) == 0) {
 			EffectFirefly ef = new EffectFireflyRainbow(new Random(rand.Next()));
 			for (int tries = 0; tries < 50; tries++) {
-				Vector2 v = new Vector2(player.position.X-screenW/2+rand.Next(screenW),player.position.Y-screenH/2+rand.Next(screenH));
+				Vector2 v = new Vector2(player.position.X-screenW/2+rand.Next(screenW),0);
 				if (!ef.IsTileSolid((int)(v.X/16),(int)(v.Y/16))) {
 					ef.Create(v);
 					ef.Spawn();

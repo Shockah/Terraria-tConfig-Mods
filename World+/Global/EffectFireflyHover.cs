@@ -42,21 +42,7 @@
 	}
 	protected virtual void OnUpdateMove(List<Player> players, int tiles) {
 		int x = (int)(pos.X/16), y = (int)(pos.Y/16);
-		if (IsTileSolid(x,y)) {
-			int y2;
-			
-			y2 = (int)(pos.Y-1/16);
-			if (y2 != y && !IsTileSolid(x,y2)) {
-				pos.Y -= 1;
-				y = y2;
-			} else {
-				y2 = (int)(pos.Y+1/16);
-				if (y2 != y && !IsTileSolid(x,y2)) {
-					pos.Y += 1;
-					y = y2;
-				} else killMe = true;
-			}
-		}
+		if (IsTileSolid(x,y)) killMe = true;
 		
 		float speedMod = 1f;
 		Tile tile = Main.tile[(int)(pos.X/16),(int)(pos.Y/16)];
