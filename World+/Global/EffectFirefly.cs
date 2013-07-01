@@ -3,6 +3,7 @@
 	protected float speed, size, alpha, sinSize, sinSizeSpeed, maxSinSize;
 	protected List<Vector2> posList = new List<Vector2>();
 	protected bool killMe = false, addLight = true;
+	protected Item inItem = null;
 	
 	public EffectFirefly(Random rand) : base() {
 		this.rand = rand;
@@ -126,24 +127,32 @@
 		return pos;
 	}
 	
-	public virtual void DrawItem(SpriteBatch sb, float x, float y, float scale) {
+	public virtual void DrawItem(SpriteBatch sb, float x, float y, float scale, Item item) {
 		Vector2 oPos = pos;
 		float oSize = size;
 		
-		pos = new Vector2(x+52/2*scale,y+52/2*scale)+Main.screenPosition;
+		pos = (item.name == "Firefly in a Bottle" ? new Vector2(x+52/2*scale,y+52/2*scale) : new Vector2(x+52/2*scale,y+52/3*2*scale))+Main.screenPosition;
 		size *= scale;
 		addLight = false;
+		inItem = item;
+		if (item.name == "Firefly in a Bottle") size /= 2f;
 		Draw(sb);
 		
 		pos = oPos;
 		size = oSize;
 		addLight = true;
+		inItem = null;
 	}
-	public virtual void DrawTile(SpriteBatch sb, Vector2 drawPos) {
+	public virtual void DrawTile(SpriteBatch sb, Tile tile, Vector2 drawPos) {
 		Vector2 oPos = pos;
+		float oSize = size;
+		
 		pos = drawPos;
+		if (tile.type == ModWorld.tileIdFireflyBottle) size /= 2f;
 		Draw(sb);
+		
 		pos = oPos;
+		size = oSize;
 	}
 	
 	public virtual void OnCatch(Player player) {}

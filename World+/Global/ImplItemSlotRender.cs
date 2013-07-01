@@ -1,6 +1,6 @@
 public class ImplItemSlotRender : IItemSlotRender {
 	public void PreDrawItemInSlot(SpriteBatch sb, Color color, Item item, Vector2 pos, float sc, ref bool letDraw) {
-		if (item.name != "Firefly in a Jar") return;
+		if (item.name != "Firefly in a Jar" && item.name != "Firefly in a Bottle") return;
 		
 		if (!item.RunMethod("ExternalGetFirefly")) return;
 		ModWorld.EffectFirefly firefly = (ModWorld.EffectFirefly)Codable.customMethodReturn;
@@ -8,7 +8,7 @@ public class ImplItemSlotRender : IItemSlotRender {
 		
 		sb.End();
 		sb.Begin(SpriteSortMode.Immediate,BlendState.Additive);
-		firefly.DrawItem(sb,pos.X,(int)(pos.Y+2*sc),sc);
+		firefly.DrawItem(sb,pos.X,(int)(pos.Y+2*sc),sc,item);
 		sb.End();
 		sb.Begin();
 		ModWorld.effectsExtraUpdate.Add(firefly);

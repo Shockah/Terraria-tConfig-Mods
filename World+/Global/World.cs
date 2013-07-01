@@ -20,7 +20,7 @@ public static List<Effect>
 public static Random rand = new Random();
 
 public static TileFireflyHandler fireflies = new TileFireflyHandler();
-public static int tileIdFirefly;
+public static int tileIdFireflyJar, tileIdFireflyBottle;
 
 public static bool isChecked;
 public static List<Vector2>
@@ -43,7 +43,8 @@ public static void Init() {
 	listJungleTargets.Clear();
 	listCorruptTargets.Clear();
 	
-	tileIdFirefly = Config.tileDefs.ID["Firefly in a Jar"];
+	tileIdFireflyJar = Config.tileDefs.ID["Firefly in a Jar"];
+	tileIdFireflyBottle = Config.tileDefs.ID["Firefly in a Bottle"];
 	fireflies.Clear();
 }
 public void Initialize(int modId) {
@@ -107,7 +108,7 @@ public void PreDrawTilesEachTick(SpriteBatch sb) {
 	sb.End();
 	sb.Begin(SpriteSortMode.Immediate,BlendState.Additive);
 	
-	fireflies.DrawAll(sb,16f,32f);
+	fireflies.DrawAll(sb);
 	
 	sb.End();
 	sb.Begin();

@@ -56,8 +56,16 @@ public class TileFireflyHandler {
 		foreach (Player player in Main.player) if (player.active && !player.ghost && player.statLife > 0) players.Add(player);
 		foreach (TileFirefly tf in list) tf.firefly.Update(players);
 	}
-	public void DrawAll(SpriteBatch sb, float offX, float offY) {
-		foreach (TileFirefly tf in list) tf.firefly.DrawTile(sb,new Vector2(tf.x*16f+offX,tf.y*16f+offY));
+	public void DrawAll(SpriteBatch sb) {
+		foreach (TileFirefly tf in list) {
+			Tile tile = Main.tile[tf.x,tf.y];
+			if (tile == null || !tile.active) continue;
+			
+			float offX = -1, offY = -1;
+			if (tile.type == ModWorld.tileIdFireflyJar) {offX = 16f; offY = 32f;}
+			if (tile.type == ModWorld.tileIdFireflyBottle) {offX = 8f; offY = 8f;}
+			if (offX != -1 && offY != -1) tf.firefly.DrawTile(sb,tile,new Vector2(tf.x*16f+offX,tf.y*16f+offY));
+		}
 	}
 	
 	public void Save(BinaryWriter bw) {

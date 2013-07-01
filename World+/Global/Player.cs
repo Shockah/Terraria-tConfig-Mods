@@ -23,7 +23,7 @@ public void UpdatePlayer(Player player) {
 	if (player.whoAmi != Main.myPlayer) return;
 	
 	Item itemSelected = player.inventory[player.selectedItem];
-	if (itemSelected.type > 0 && itemSelected.stack > 0 && itemSelected.name == "Bottle" && Main.rand.Next(250) == 0) {
+	if (itemSelected.type > 0 && itemSelected.stack > 0 && (itemSelected.name == "Bottle" || itemSelected.name == "Jar") && Main.rand.Next(250) == 0) {
 		ModWorld.EffectFirefly close = null;
 		double closeDist = -1;
 		foreach (ModWorld.Effect e in ModWorld.GetAllOfType(typeof(ModWorld.EffectFirefly))) {
@@ -39,7 +39,7 @@ public void UpdatePlayer(Player player) {
 			for (int i = 0; i < 40; i++) {
 				Item item = player.inventory[i];
 				if (item.type <= 0 || item.stack <= 0) {
-					item.SetDefaults("Firefly in a Jar");
+					item.SetDefaults("Firefly in a "+itemSelected.name);
 					item.stack = 1;
 					item.RunMethod("ExternalSetFirefly",close);
 					
