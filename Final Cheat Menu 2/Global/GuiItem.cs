@@ -74,25 +74,6 @@ public class GuiItem : GuiCheat {
 			}
 		}
 		
-		string[] extraItems = new string[]{
-			"Gold Pickaxe","Silver Pickaxe","Copper Pickaxe",
-			"Gold Broadsword","Silver Broadsword","Copper Broadsword",
-			"Gold Shortsword","Silver Shortsword","Copper Shortsword",
-			"Gold Hammer","Silver Hammer","Copper Hammer",
-			"Gold Axe","Silver Axe","Copper Axe",
-			"Gold Bow","Silver Bow","Copper Bow",
-			"Blue Phasesaber","Red Phasesaber","Green Phasesaber","Purple Phasesaber","White Phasesaber","Yellow Phasesaber"
-		};
-		foreach (string str in extraItems) {
-			Item item = new Item();
-			item.SetDefaults(str);
-			if (ModWorld.IsBlankItem(item)) continue;
-			allDefs.Add(new ItemDef(item));
-			
-			string modpack = "";
-			if (!modCategories.ContainsKey(modpack)) modCategories.Add(modpack,false);
-		}
-		
 		if (!Main.dedServ) {
 			modTextures[""] = Main.npcHeadTexture[1];
 		}
@@ -385,7 +366,10 @@ public class GuiItem : GuiCheat {
 		keys.Clear();
 		foreach (KeyValuePair<string,bool> pair in standardCategories) keys.Add(pair.Key);
 		foreach (string key in keys) {
-			if (PostDrawFilter(sb,ModWorld.texItemBlank,standardCategories[key],key,ref xx,ref yy)) standardCategories[key] = !standardCategories[key];
+			if (PostDrawFilter(sb,ModWorld.texItemBlank,standardCategories[key],key,ref xx,ref yy)) {
+				standardCategories[key] = !standardCategories[key];
+				OnSelectCategory(key);
+			}
 		}
 		
 		if (xx == 0) {
@@ -399,7 +383,10 @@ public class GuiItem : GuiCheat {
 		foreach (KeyValuePair<string,bool> pair in modCategories) keys.Add(pair.Key);
 		foreach (string key in keys) {
 			string s = key == "" ? "Vanilla" : key;
-			if (PostDrawFilter(sb,ModWorld.texItemBlank,modCategories[key],s+" items",ref xx,ref yy)) modCategories[key] = !modCategories[key];
+			if (PostDrawFilter(sb,ModWorld.texItemBlank,modCategories[key],s+" items",ref xx,ref yy)) {
+				modCategories[key] = !modCategories[key];
+				OnSelectModCategory(key);
+			}
 		}
 		
 		if (!oldBlockChange && blockChange) {
@@ -427,6 +414,31 @@ public class GuiItem : GuiCheat {
 		if (blockChange) return false;
 		if (ret) blockChange = true;
 		return ret;
+	}
+	
+	public virtual void OnSelectCategory(string cat) {
+		switch (cat) {
+			case "Accessory": ResetCategories("Ammo","Head","Torso","Legs","Other"); break;
+			case "Ammo": ResetCategories("Accessory","Head","Torso","Legs","Other"); break;
+			case "Head": ResetCategories("Torso","Legs","Other"); break;
+			case "Torso": ResetCategories("Head","Legs","Other"); break;
+			case "Legs": ResetCategories("Head","Torso","Other"); break;
+			case "Melee": ResetCategories("Ranged","Magic","Other"); break;
+			case "Ranged": ResetCategories("Melee","Magic","Other"); break;
+			case "Magic": ResetCategories("Melee","Ranged","Other"); break;
+			case "Tile": ResetCategories("Wall","Other"); break;
+			case "Wall": ResetCategories("Tile","Other"); break;
+			case "Other": ResetCategories("Melee","Ranged","Magic","Ammo","Head","Torso","Legs","Vanity","Accessory","Consumable","Tile","Wall"); break;
+		}
+	}
+	protected void ResetCategories(params string[] categories) {
+		foreach (string cat in categories) standardCategories[cat] = false;
+	}
+	public virtual void OnSelectModCategory(string cat) {
+		if (cat == "") return;
+		List<string> keys = new List<string>();
+		foreach (KeyValuePair<string,bool> pair in modCategories) if (pair.Key != "" && pair.Key != cat) keys.Add(pair.Key);
+		foreach (string key in keys) modCategories[key] = false;
 	}
 	
 	public override bool PretendChat() {
