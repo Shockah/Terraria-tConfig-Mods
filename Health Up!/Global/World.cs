@@ -8,6 +8,8 @@ public void Initialize() {
 }
 
 public static bool PreDrawLifeHearts(SpriteBatch sb) {
+	if (Settings.GetBool("customDisplay")) return true;
+	
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	if (p.ghost) return false;
@@ -45,13 +47,14 @@ public static Color HealthUpGetHealthColor(int set) {
 }
 
 public static bool PreDrawManaStars(SpriteBatch sb) {
+	if (Settings.GetBool("customDisplay")) return true;
+	
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	if (p.ghost) return false;
 	if (p.statManaMax2 <= 0) return false;
 	
-	const int valueStar = 20;
-	const int starOffset = 28, starPerLine = 10;
+	const int valueStar = 20, starPerLine = 10;
 	
 	Texture2D tex = Main.manaTexture, tex2 = Main.goreTexture[Config.goreID["HealthUpStar2"]];
 	int x = Main.screenWidth-25, y = 30+tex.Height/2;
@@ -110,11 +113,11 @@ private static void DrawStringShadowed(SpriteBatch sb, SpriteFont font, string t
 }
 
 public static int ExternalGetMaxHealth() {
-	return ModGeneric.HealthUpMaxHealth;
+	return 400*Settings.GetInt("multLife");
 }
 public static int ExternalGetMaxMana() {
-	return ModGeneric.HealthUpMaxMana;
+	return 200*Settings.GetInt("multMana");
 }
 public static bool ExternalGetCustomBarDisplay() {
-	return ModGeneric.HealthUpCustom;
+	return Settings.GetBool("customDisplay");
 }

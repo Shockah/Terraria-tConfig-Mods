@@ -15,6 +15,6 @@ public static void ExternalInitAchievementsDelegates(
 	Action<string,object> ProgressAllPlayers,
 	Func<string,object[]> GetAchievementInfo)
 {
-	ConfigProgress("TERRARIA_MAXHEALTH",ModGeneric.HealthUpMaxHealth,null);
-	ConfigProgress("TERRARIA_MAXMANA",ModGeneric.HealthUpMaxMana,null);
+	ConfigProgress("TERRARIA_MAXHEALTH",400*Settings.GetInt("multLife"),null);
+	ConfigProgress("TERRARIA_MAXMANA",200*Settings.GetInt("multMana"),null);
 }

@@ -1,0 +1,53 @@
+{
+	"settings": {
+		"multLife": {
+			"display": "Max health multiplier",
+			"type": "int",
+			"serverSynced": true,
+			"ingameLock": true,
+			
+			"rangeMin": 1,
+			"rangeMax": 5,
+			"default": 2
+		},
+		"multMana": {
+			"display": "Max mana multiplier",
+			"type": "int",
+			"serverSynced": true,
+			"ingameLock": true,
+			
+			"rangeMin": 1,
+			"rangeMax": 5,
+			"default": 2
+		},
+		"multCrystalLife": {
+			"display": "Life Crystal increase multiplier",
+			"type": "int",
+			"serverSynced": true,
+			"ingameLock": true,
+			
+			"rangeMin": 1,
+			"rangeMax": 5,
+			"default": 1
+		},
+		"multCrystalMana": {
+			"display": "Mana Crystal increase multiplier",
+			"type": "int",
+			"serverSynced": true,
+			"ingameLock": true,
+			
+			"rangeMin": 1,
+			"rangeMax": 5,
+			"default": 1
+		},
+		
+		"customDisplay": {
+			"display": "Use custom interface mod",
+			"type": "bool",
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": false
+		}
+	}
+}
