@@ -4,6 +4,7 @@ public class OSIHPBars : OnScreenInterfaceable {
 	}
 	
 	public void DrawOnScreen(SpriteBatch sb, double layer) {
+		if (ModWorld.display == "off") return;
 		if (Config.tileInterface != null) return;
 		if (Config.npcInterface != null) return;
 		
@@ -14,7 +15,12 @@ public class OSIHPBars : OnScreenInterfaceable {
 			if (player == null) continue;
 			if (!player.active) continue;
 			if (player.dead || player.ghost) continue;
-			if (player.whoAmi == Main.myPlayer && !ModGeneric.HPBarShowMy) continue;
+			
+			if (ModWorld.display != "all") {
+				if (player.whoAmi == Main.myPlayer && ModWorld.display != "my") continue;
+				if (player.whoAmi != Main.myPlayer && ModWorld.display != "other") continue;
+			}
+			
 			if (player.invis) continue;
 			float alpha = GetBarAlpha(player);
 			if (alpha <= 0) continue;

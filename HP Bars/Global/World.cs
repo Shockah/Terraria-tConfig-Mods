@@ -1,7 +1,8 @@
 #INCLUDE "OSIHPBars.cs"
 
 private static Texture2D texBack = null, texGreen = null, texRed = null;
-private static readonly Vector2[] shadowOffset = {new Vector2(-1,-1),new Vector2(1,-1),new Vector2(-1,1),new Vector2(1,1)};
+private readonly static Vector2[] shadowOffset = {new Vector2(-1,-1),new Vector2(1,-1),new Vector2(-1,1),new Vector2(1,1)};
+public static string display;
 
 static ModWorld() {
 	if (Main.dedServ) return;
@@ -19,6 +20,10 @@ static ModWorld() {
 	texRed = new Texture2D(Config.mainInstance.GraphicsDevice,1,bgc.Length);
 	for (int i = 0; i < bgc.Length; i++) bgc[i] = Color.Lerp(Color.Red,Color.Black,1f*i/bgc.Length/2f);
 	texRed.SetData(bgc);
+}
+
+public void Initialize() {
+	display = Settings.GetChoice("display");
 }
 
 public void RegisterOnScreenInterfaces() {

@@ -1,0 +1,28 @@
+{
+	"settings": {
+		"display": {
+			"display": "Display",
+			"type": "choice",
+			
+			"choices": [
+				{
+					"value": "off",
+					"display": "Nothing"
+				},
+				{
+					"value": "my",
+					"display": "My HP"
+				},
+				{
+					"value": "other",
+					"display": "Other HP"
+				},
+				{
+					"value": "all",
+					"display": "All HP"
+				}
+			],
+			"default": "other"
+		}
+	}
+}
