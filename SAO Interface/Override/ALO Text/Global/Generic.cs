@@ -1,1 +1,0 @@
-public const int InterfaceType = ModWorld.INTERFACE_ALO_TEXT;

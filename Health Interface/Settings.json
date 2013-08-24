@@ -1,0 +1,48 @@
+{
+	"settings": {
+		"style": {
+			"display": "Theme",
+			"type": "choice",
+			
+			"choices": [
+				{
+					"value": "off",
+					"display": "Disabled"
+				},
+				{
+					"value": "sao",
+					"display": "Sword Art Online"
+				},
+				{
+					"value": "alo",
+					"display": "ALfheim Online"
+				}
+			],
+			"default": "alo"
+		},
+		"standardpos": {
+			"display": "Use vanilla position",
+			"type": "bool",
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": false
+		},
+		"text": {
+			"display": "Extra text",
+			"type": "bool",
+			
+			"displayTrue": "Enabled",
+			"displayFalse": "Disabled",
+			"default": true
+		},
+		"party": {
+			"display": "Display party HP",
+			"type": "bool",
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": true
+		}
+	}
+}

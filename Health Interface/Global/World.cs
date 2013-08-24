@@ -1,3 +1,5 @@
+public static int interfaceType;
+public static bool standardPos, party;
 public const int
 	INTERFACE_DEFAULT = 0,
 	INTERFACE_SAO = 1,
@@ -8,8 +10,25 @@ public const int
 private static readonly Vector2[] shadowOffset = {new Vector2(-1,-1),new Vector2(1,-1),new Vector2(-1,1),new Vector2(1,1)};
 private static Texture2D texBar, texBar2, texPBar, texBarBorder, texBarBorder2, texPBarBorder;
 
+private static DepthStencilState dss1, dss2;
+private static BlendState bs1;
+private static RenderTarget2D rt;
+private static SpriteBatch sb;
+
+public static float LdirX(double dist, double angle) {
+	return (float)(-Math.Cos((angle+180)*Math.PI/180f)*dist);
+}
+public static float LdirY(double dist, double angle) {
+	return (float)(Math.Sin((angle+180)*Math.PI/180)*dist);
+}
+
 public void Initialize(int modId) {
-	switch (ModGeneric.InterfaceType) {
+	interfaceType = 0;
+	if (Settings.GetChoice("style") != "off") interfaceType = Settings.GetChoiceIndex("style")*2-1+(Settings.GetBool("text") ? 1 : 0);
+	standardPos = Settings.GetBool("standardpos");
+	party = Settings.GetBool("party");
+	
+	switch (interfaceType) {
 		case INTERFACE_SAO: case INTERFACE_SAO_TEXT: {
 			texBar = Main.goreTexture[Config.goreID["SAOBar"]];
 			texBar2 = Main.goreTexture[Config.goreID["SAOBar2"]];
@@ -35,16 +54,21 @@ public bool PreDrawLifeHearts(SpriteBatch sb) {
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	
-	switch (ModGeneric.InterfaceType) {
+	switch (interfaceType) {
 		case INTERFACE_SAO: case INTERFACE_SAO_TEXT: {
 			if (p.ghost) return false;
-			if (Main.playerInventory) return false;
+			if (!standardPos && Main.playerInventory) return false;
 			
 			int x = 16, y = 76;
+			if (standardPos) {
+				y = 16;
+				x = Main.screenWidth-16-texBarBorder.Width;
+			}
 			
-			if (ModGeneric.InterfaceType == INTERFACE_SAO_TEXT) {
+			if (interfaceType == INTERFACE_SAO_TEXT) {
 				string text = Lang.inter[0]+" "+p.statLife+"/"+p.statLifeMax;
-				DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(x+texBarBorder.Width+4,y+2),Color.White,Color.Black,default(Vector2),.75f,SpriteEffects.None);
+				float txtx = standardPos ? x-4-Main.fontMouseText.MeasureString(text).X*.75f : x+texBarBorder.Width+4;
+				DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(txtx,y+2),Color.White,Color.Black,default(Vector2),.75f,SpriteEffects.None);
 			}
 			
 			sb.Draw(p.statManaMax2 > 0 ? texBarBorder2 : texBarBorder,new Vector2(x,y),new Rectangle(0,0,texBarBorder.Width,texBarBorder.Height),Color.White);
@@ -58,7 +82,12 @@ public bool PreDrawLifeHearts(SpriteBatch sb) {
 				if (ww > 0) sb.Draw(texBar,new Vector2(x+4,y+4+i*2),new Rectangle(0,i*2,ww,2),c);
 			}
 			
-			if (p.team > 0) {
+			if (party && p.team > 0 && !Main.playerInventory) {
+				if (standardPos) {
+					x = 16;
+					y = 108;
+				}
+				
 				int drawn = 0;
 				bool infoText = p.accCompass > 0 || p.accDepthMeter > 0 || p.accWatch > 0;
 				bool buffs = false;
@@ -78,7 +107,7 @@ public bool PreDrawLifeHearts(SpriteBatch sb) {
 					
 					DrawStringShadowed(sb,Main.fontMouseText,p2.name,new Vector2(x,y),Color.White,Color.Black);
 					y += 20;
-					if (ModGeneric.InterfaceType == INTERFACE_SAO_TEXT) {
+					if (interfaceType == INTERFACE_SAO_TEXT) {
 						string text = p2.statLife+"/"+p2.statLifeMax;
 						DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(x+texPBarBorder.Width+4,y+2),Color.White,Color.Black,default(Vector2),.75f);
 					}
@@ -101,13 +130,18 @@ public bool PreDrawLifeHearts(SpriteBatch sb) {
 		} break;
 		case INTERFACE_ALO: case INTERFACE_ALO_TEXT: {
 			if (p.ghost) return false;
-			if (Main.playerInventory) return false;
+			if (!standardPos && Main.playerInventory) return false;
 			
 			int x = 16, y = 76;
+			if (standardPos) {
+				y = 16;
+				x = Main.screenWidth-16-texBarBorder.Width;
+			}
 			
-			if (ModGeneric.InterfaceType == INTERFACE_ALO_TEXT) {
+			if (interfaceType == INTERFACE_ALO_TEXT) {
 				string text = Lang.inter[0]+" "+p.statLife+"/"+p.statLifeMax;
-				DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(x+texBarBorder.Width,y+8),Color.White,Color.Black,default(Vector2),.75f,SpriteEffects.None);
+				float txtx = standardPos ? x-Main.fontMouseText.MeasureString(text).X*.75f : x+texBarBorder.Width;
+				DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(txtx,y+8),Color.White,Color.Black,default(Vector2),.75f,SpriteEffects.None);
 			}
 			
 			sb.Draw(texBarBorder,new Vector2(x,y),new Rectangle(0,0,texBarBorder.Width,texBarBorder.Height),Color.White);
@@ -125,7 +159,12 @@ public bool PreDrawLifeHearts(SpriteBatch sb) {
 				if (ww > 0) sb.Draw(texBar,new Vector2(x+76,y+12+i*2),new Rectangle(0,i*2,ww,2),c);
 			}
 			
-			if (p.team > 0) {
+			if (party && p.team > 0 && !Main.playerInventory) {
+				if (standardPos) {
+					x = 16;
+					y = 108;
+				}
+				
 				int drawn = 0;
 				bool infoText = p.accCompass > 0 || p.accDepthMeter > 0 || p.accWatch > 0;
 				bool buffs = false;
@@ -145,7 +184,7 @@ public bool PreDrawLifeHearts(SpriteBatch sb) {
 					
 					DrawStringShadowed(sb,Main.fontMouseText,p2.name,new Vector2(x,y),Color.White,Color.Black);
 					y += 20;
-					if (ModGeneric.InterfaceType == INTERFACE_ALO_TEXT) {
+					if (interfaceType == INTERFACE_ALO_TEXT) {
 						string text = p2.statLife+"/"+p2.statLifeMax;
 						DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(x+texPBarBorder.Width+4,y+2),Color.White,Color.Black,default(Vector2),.75f);
 					}
@@ -176,17 +215,22 @@ public bool PreDrawManaStars(SpriteBatch sb) {
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	
-	switch (ModGeneric.InterfaceType) {
+	switch (interfaceType) {
 		case INTERFACE_SAO: case INTERFACE_SAO_TEXT: {
 			if (p.ghost) return false;
 			if (p.statManaMax2 <= 0) return false;
-			if (Main.playerInventory) return false;
+			if (!standardPos && Main.playerInventory) return false;
 			
 			int x = 16, y = 76;
+			if (standardPos) {
+				y = 16;
+				x = Main.screenWidth-16-texBarBorder.Width;
+			}
 			
-			if (ModGeneric.InterfaceType == INTERFACE_SAO_TEXT) {
+			if (interfaceType == INTERFACE_SAO_TEXT) {
 				string text = Lang.inter[2]+": "+p.statMana+"/"+p.statManaMax2;
-				DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(x+texBarBorder.Width,y+16),Color.White,Color.Black,default(Vector2),.75f,SpriteEffects.None);
+				float txtx = standardPos ? x-4-Main.fontMouseText.MeasureString(text).X*.75f : x+texBarBorder.Width+4;
+				DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(txtx,y+16),Color.White,Color.Black,default(Vector2),.75f,SpriteEffects.None);
 			}
 			
 			int times = (int)Math.Ceiling(texBar2.Height/2f);
@@ -197,13 +241,18 @@ public bool PreDrawManaStars(SpriteBatch sb) {
 		case INTERFACE_ALO: case INTERFACE_ALO_TEXT: {
 			if (p.ghost) return false;
 			if (p.statManaMax2 <= 0) return false;
-			if (Main.playerInventory) return false;
+			if (!standardPos && Main.playerInventory) return false;
 			
 			int x = 16, y = 76;
+			if (standardPos) {
+				y = 16;
+				x = Main.screenWidth-16-texBarBorder.Width;
+			}
 			
-			if (ModGeneric.InterfaceType == INTERFACE_ALO_TEXT) {
+			if (interfaceType == INTERFACE_ALO_TEXT) {
 				string text = Lang.inter[2]+": "+p.statMana+"/"+p.statManaMax2;
-				DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(x+texBarBorder.Width,y+24),Color.White,Color.Black,default(Vector2),.75f,SpriteEffects.None);
+				float txtx = standardPos ? x-Main.fontMouseText.MeasureString(text).X*.75f : x+texBarBorder.Width;
+				DrawStringShadowed(sb,Main.fontMouseText,text,new Vector2(txtx,y+24),Color.White,Color.Black,default(Vector2),.75f,SpriteEffects.None);
 			}
 			
 			int times = (int)Math.Ceiling(texBar2.Height/2f);
@@ -222,10 +271,12 @@ public bool PreDrawManaStars(SpriteBatch sb) {
 }
 
 public bool PreDrawBuffsList(SpriteBatch sb) {
+	if (standardPos) return true;
+	
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	
-	switch (ModGeneric.InterfaceType) {
+	switch (interfaceType) {
 		case INTERFACE_SAO: case INTERFACE_SAO_TEXT: case INTERFACE_ALO: case INTERFACE_ALO_TEXT: {
 			if (p.ghost) return false;
 			if (Main.playerInventory) return false;
@@ -244,10 +295,12 @@ public bool PreDrawBuffsList(SpriteBatch sb) {
 	return false;
 }
 public bool PreDrawInformationTexts(SpriteBatch sb) {
+	if (standardPos) return true;
+	
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	
-	switch (ModGeneric.InterfaceType) {
+	switch (interfaceType) {
 		case INTERFACE_SAO: case INTERFACE_SAO_TEXT: case INTERFACE_ALO: case INTERFACE_ALO_TEXT: {
 			Dictionary<int,int> A = new Dictionary<int,int>();
 			A.Add(0,0);
@@ -265,14 +318,24 @@ public bool PreDrawLifeText(SpriteBatch sb) {
 	Player p = Main.player[Main.myPlayer];
 	if (p == null) return false;
 	
-	switch (ModGeneric.InterfaceType) {
+	switch (interfaceType) {
 		case INTERFACE_SAO: case INTERFACE_SAO_TEXT: {
-			if (Main.playerInventory) return false;
+			if (!standardPos && Main.playerInventory) return false;
 			
 			int x = 16, y = 76;
+			if (standardPos) {
+				y = 16;
+				x = Main.screenWidth-16-texBarBorder.Width;
+			}
+			
 			if (Main.mouseX >= x+194 && Main.mouseY >= y+18 && Main.mouseX < x+194+texBar2.Width && Main.mouseY < y+18+texBar2.Height) DrawManaText(sb,p);
 			else if (Main.mouseX >= x+4 && Main.mouseY >= y+4 && Main.mouseX < x+4+texBar.Width && Main.mouseY < y+4+texBar.Height) DrawLifeText(sb,p);
-			else if (p.team > 0) {
+			else if (p.team > 0 && !Main.playerInventory) {
+				if (standardPos) {
+					x = 16;
+					y = 108;
+				}
+				
 				int drawn = 0;
 				bool infoText = p.accCompass > 0 || p.accDepthMeter > 0 || p.accWatch > 0;
 				bool buffs = false;
@@ -299,12 +362,22 @@ public bool PreDrawLifeText(SpriteBatch sb) {
 			}
 		} break;
 		case INTERFACE_ALO: case INTERFACE_ALO_TEXT: {
-			if (Main.playerInventory) return false;
+			if (!standardPos && Main.playerInventory) return false;
 			
 			int x = 16, y = 76;
+			if (standardPos) {
+				y = 16;
+				x = Main.screenWidth-16-texBarBorder.Width;
+			}
+			
 			if (Main.mouseX >= x+76 && Main.mouseY >= y+12 && Main.mouseX < x+76+texBar.Width && Main.mouseY < y+12+texBar.Height) DrawLifeText(sb,p);
 			else if (Main.mouseX >= x+76 && Main.mouseY >= y+26 && Main.mouseX < x+76+texBar2.Width && Main.mouseY < y+26+texBar2.Height) DrawManaText(sb,p);
-			else if (p.team > 0) {
+			else if (p.team > 0 && !Main.playerInventory) {
+				if (standardPos) {
+					x = 16;
+					y = 108;
+				}
+				
 				int drawn = 0;
 				bool infoText = p.accCompass > 0 || p.accDepthMeter > 0 || p.accWatch > 0;
 				bool buffs = false;
@@ -394,7 +467,7 @@ public static void DrawBuffsList(SpriteBatch sb, int x, int y) {
 	
 	Main.buffString = "";
 	int num63 = -1;
-	for (int num64 = 0; num64 < 10; num64++) {
+	for (int num64 = 0; num64 < Main.player[Main.myPlayer].buffType.Length; num64++) {
 		if (Main.player[Main.myPlayer].buffType[num64] > 0) {
 			int num65 = Main.player[Main.myPlayer].buffType[num64];
 			int num66 = x + (num64%5) * 38;
