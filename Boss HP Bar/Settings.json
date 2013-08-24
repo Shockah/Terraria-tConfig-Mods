@@ -1,0 +1,24 @@
+{
+	"settings": {
+		"style": {
+			"display": "Theme",
+			"type": "choice",
+			
+			"choices": [
+				{
+					"value": "off",
+					"display": "Disabled"
+				},
+				{
+					"value": "horizontal_bottom",
+					"display": "Horizontal, bottom"
+				},
+				{
+					"value": "circular_bottomleft",
+					"display": "Circular, bottom-left"
+				}
+			],
+			"default": "horizontal_bottom"
+		}
+	}
+}
