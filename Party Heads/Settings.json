@@ -1,0 +1,36 @@
+{
+	"settings": {
+		"edge": {
+			"display": "Reserve edge of screen",
+			"type": "int",
+			
+			"rangeMin": 16,
+			"rangeMax": 500,
+			"default": 32
+		},
+		"scaleMin": {
+			"display": "Minimum head scale in percent",
+			"type": "int",
+			
+			"rangeMin": 0,
+			"rangeMax": 500,
+			"default": 100
+		},
+		"scaleMax": {
+			"display": "Maximum head scale in percent",
+			"type": "int",
+			
+			"rangeMin": 0,
+			"rangeMax": 500,
+			"default": 250
+		},
+		"distMax": {
+			"display": "Distance at which the head is the smallest",
+			"type": "int",
+			
+			"rangeMin": 100,
+			"rangeMax": 2400,
+			"default": 800
+		}
+	}
+}
