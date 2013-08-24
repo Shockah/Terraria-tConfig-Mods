@@ -1,0 +1,12 @@
+{
+	"settings": {
+		"toggle": {
+			"display": "Togglable",
+			"type": "bool",
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": false
+		}
+	}
+}

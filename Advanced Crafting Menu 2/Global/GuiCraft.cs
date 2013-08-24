@@ -74,7 +74,8 @@ public class GuiCraft : Interfaceable {
 		Dictionary<string,Texture2D> customTex = new Dictionary<string,Texture2D>();
 		Dictionary<string,bool> tmpVanillaItem = new Dictionary<string,bool>();
 		
-		foreach (Recipe recipe in Main.recipe) {
+		for (int i = 0; i < Main.numAvailableRecipes; i++) {
+			Recipe recipe = Main.recipe[Main.availableRecipe[i]];
 			if (ModWorld.IsBlankItem(recipe.createItem)) continue;
 			
 			allDefs.Add(new RecipeDef(recipe));

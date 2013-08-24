@@ -1,5 +1,3 @@
-public static bool instaShow = true;
-
 public void OnRecipeRefresh() {
 	if (Config.tileInterface != null && Config.tileInterface.code is ModWorld.GuiCraft) {
 		ModWorld.GuiCraft.Filter();

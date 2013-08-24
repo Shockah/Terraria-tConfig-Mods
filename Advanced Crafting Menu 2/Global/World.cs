@@ -57,7 +57,7 @@ public void PostDraw(SpriteBatch sb) {
 		}
 	}
 	
-	if (Main.playerInventory && !ModGeneric.instaShow && (Config.tileInterface == null || Config.tileInterface is GuiCraft)) {
+	if (Main.playerInventory && Settings.GetBool("toggle") && (Config.tileInterface == null || Config.tileInterface.code is GuiCraft)) {
 		Vector2 v = new Vector2(414,210);
 		if (MouseRegion(v,new Vector2(texShow.Width,texShow.Height))) {
 			Main.player[Main.myPlayer].mouseInterface = true;
