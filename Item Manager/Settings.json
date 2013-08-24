@@ -1,0 +1,24 @@
+{
+	"settings": {
+		"order": {
+			"display": "Change the order of despawning items",
+			"type": "bool",
+			"serverSynced": true,
+			"ingameLock": true,
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": true
+		},
+		"merge": {
+			"display": "Merge item stacks (causes problems in MP)",
+			"type": "bool",
+			"serverSynced": true,
+			"ingameLock": true,
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": false
+		}
+	}
+}

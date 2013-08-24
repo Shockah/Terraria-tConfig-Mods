@@ -1,5 +1,7 @@
 //Modified code, original code by Yoraiz0r
 public void UpdateItem(int itemId, ref bool update, ref int movementType, ref int lavaImmunity) {
+	if (!Settings.GetBool("merge")) return;
+	
 	Item item = Main.item[itemId];
 	if (item.maxStack == 1) return;
 	
