@@ -9,12 +9,14 @@ int snowWidthBase = 20;
 
 public void ModifyWorld()
 {
-    Main.statusText = "Making snow masses";
-    if (ModGeneric.genMoreSnow) for(int zzz = 0; zzz < SnowAbdudance; zzz++) AddSnows();
-    Main.statusText = "Adding frosty caves";
-    AddIceArena();
-    AddIceArena();
-    AddIceArena(); //made 3 ice cone areas generate
+    if (Settings.GetBool("snow")) {
+		Main.statusText = "Making snow masses";
+		for(int zzz = 0; zzz < SnowAbdudance; zzz++) AddSnows();
+	}
+	if (Settings.GetBool("icegen")) {
+		Main.statusText = "Adding frosty caves";
+		for (int i = 0; i < 3; i++) AddIceArena(); //made 3 ice cone areas generate
+	}
 }
 
 #region add ice arena

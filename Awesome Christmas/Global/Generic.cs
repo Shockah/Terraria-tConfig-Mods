@@ -1,8 +1,6 @@
 #INCLUDE "Pair.cs"
 #INCLUDE "WeightedRandom.cs"
 
-public static bool genMoreSnow = true;
-
 public static void checkXMas() {
 	Main.xMas = true;
 }

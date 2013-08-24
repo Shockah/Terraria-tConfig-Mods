@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"snow": {
+			"display": "Tons of snow",
+			"type": "bool",
+			"ingameLock": true,
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": true
+		},
+		"icegen": {
+			"display": "Generate ice",
+			"type": "bool",
+			"ingameLock": true,
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": true
+		}
+	}
+}
