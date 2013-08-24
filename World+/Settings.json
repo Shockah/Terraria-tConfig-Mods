@@ -1,0 +1,15 @@
+{
+	"settings": {
+		"rarity": {
+			"display": "Rarity of rare fireflies",
+			"tooltip": "lower = more rare",
+			"type": "int",
+			"serverSynced": true,
+			"ingameLock": true,
+			
+			"rangeMin": 1,
+			"rangeMax": 1000,
+			"default": 50
+		}
+	}
+}

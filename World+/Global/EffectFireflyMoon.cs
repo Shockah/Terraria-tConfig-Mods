@@ -31,7 +31,7 @@
 		HsvToRgb((float)(120f+rand.NextDouble()*60f),1f,1f,out r,out g,out b);
 		color = new Color(r,g,b);
 		
-		hasRing = rand.Next(50) == 0;
+		hasRing = rand.Next(Settings.GetInt("rarity")) == 0;
 	}
 	
 	public override void Save(BinaryWriter bw) {

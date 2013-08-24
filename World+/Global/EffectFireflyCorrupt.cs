@@ -36,7 +36,7 @@
 		rotSpeed1 = (float)((1d+rand.NextDouble()*2d)*rand.Next(2) == 1 ? 1 : -1);
 		rot2 = (float)(rand.NextDouble()*360d);
 		rotSpeed2 = (float)((3d+rand.NextDouble()*6d)*Math.Sign(-rotSpeed1));
-		chaos = rand.Next(50) == 0;
+		chaos = rand.Next(Settings.GetInt("rarity")) == 0;
 	}
 	
 	public override void Save(BinaryWriter bw) {

@@ -40,7 +40,7 @@
 			default: break;
 		}
 		
-		int col = rand.Next(50);
+		int col = rand.Next(Settings.GetInt("rarity"));
 		if (col == 0) {
 			color1 = new Color(0,255,0);
 			color2 = new Color(127,255,0);

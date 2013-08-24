@@ -1,4 +1,4 @@
-public class EffectFireflyRainbow : EffectFireflyHover {
+[Serializable] public class EffectFireflyRainbow : EffectFireflyHover {
 	public static int GetMaxCount(List<Player> players) {
 		int ret = 0, cur = 6, nextTier = 1, i = 0;
 		foreach (Player player in players) {
@@ -27,7 +27,7 @@ public class EffectFireflyRainbow : EffectFireflyHover {
 	private void Init() {
 		speed = (float)Math.Sqrt(speed/1.5f+2f);
 		hue = (float)(rand.NextDouble()*360d);
-		hueSpeed = rand.Next(50) == 0 ? (float)((1d+rand.NextDouble()*9d)*rand.Next(2) == 1 ? 1 : -1) : 0;
+		hueSpeed = rand.Next(Settings.GetInt("rarity")) == 0 ? (float)((1d+rand.NextDouble()*9d)*rand.Next(2) == 1 ? 1 : -1) : 0;
 	}
 	
 	public override void Save(BinaryWriter bw) {
