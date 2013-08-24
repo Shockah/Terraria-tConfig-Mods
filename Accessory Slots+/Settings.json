@@ -1,0 +1,14 @@
+{
+	"settings": {
+		"slots": {
+			"display": "Extra accessory slots",
+			"type": "int",
+			"serverSynced": true,
+			"ingameLock": true,
+			
+			"rangeMin": 1,
+			"rangeMax": 15,
+			"default": 3
+		}
+	}
+}

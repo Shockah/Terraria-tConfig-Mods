@@ -17,16 +17,17 @@ public void Initialize(int modId) {
 	Init();
 }
 public static void Init() {
+	int eslots = Settings.GetInt("slots");
 	if (!Main.dedServ) {
-		gui = new InterfaceObj(new GuiAccessorySlots(),ModGeneric.extraSlots+1,0);
+		gui = new InterfaceObj(new GuiAccessorySlots(),eslots+1,0);
 		int x = Main.screenWidth-139, y = 364;
-		for (int i = 0; i < ModGeneric.extraSlots; i++) gui.AddItemSlot(x-i/3*48,y+(i%3)*48);
+		for (int i = 0; i < eslots; i++) gui.AddItemSlot(x-i/3*48,y+(i%3)*48);
 		gui.AddItemSlot(-100,-100);
 	}
 	
 	accessories = new Item[Main.player.Length][];
 	for (int i = 0; i < accessories.Length; i++) {
-		accessories[i] = new Item[ModGeneric.extraSlots];
+		accessories[i] = new Item[eslots];
 		for (int j = 0; j < accessories[i].Length; j++) accessories[i][j] = new Item();
 	}
 	
@@ -40,7 +41,7 @@ public static void Init() {
 }
 
 public void PlayerConnected(int playerID) {
-	accessories[playerID] = new Item[ModGeneric.extraSlots];
+	accessories[playerID] = new Item[Settings.GetInt("slots")];
 	for (int i = 0; i < accessories[playerID].Length; i++) accessories[playerID][i] = new Item();
 	
 	foreach (Player player in Main.player) {
@@ -76,7 +77,7 @@ public void NetReceive(int messageType, BinaryReader br) {
 				int playerID = br.ReadByte();
 				if (playerID == Main.myPlayer) break;
 				
-				for (int i = 0; i < ModGeneric.extraSlots; i++) {
+				for (int i = 0; i < Settings.GetInt("slots"); i++) {
 					accessories[playerID][i].RunMethod("OnUnequip",Main.player[playerID],-i-1);
 					accessories[playerID][i] = ItemLoad(br);
 					accessories[playerID][i].RunMethod("OnEquip",Main.player[playerID],-i-1);
@@ -119,7 +120,7 @@ public void NetReceive(int messageType, BinaryReader br) {
 			} break;
 			case MSG_ITEMPACK: {
 				int playerID = br.ReadByte();
-				for (int i = 0; i < ModGeneric.extraSlots; i++) {
+				for (int i = 0; i < Settings.GetInt("slots"); i++) {
 					accessories[playerID][i].RunMethod("OnUnequip",Main.player[playerID],-i-1);
 					accessories[playerID][i] = ItemLoad(br);
 					accessories[playerID][i].RunMethod("OnEquip",Main.player[playerID],-i-1);
@@ -183,7 +184,7 @@ public void PostDraw(SpriteBatch sb) {
 	if (!Main.playerInventory || Config.mainInstance.showNPCs) return;
 	Player player = Main.player[Main.myPlayer];
 	
-	for (int i = 0; i < ModGeneric.extraSlots; i++) {
+	for (int i = 0; i < Settings.GetInt("slots"); i++) {
 		float scale = .85f;
 		Vector2 pos = gui.slotLocation[i];
 		if (Main.mouseX >= pos.X && Main.mouseX <= pos.X+Main.inventoryBackTexture.Width*scale && Main.mouseY >= pos.Y && Main.mouseY <= pos.Y+Main.inventoryBackTexture.Height*scale) {
@@ -228,7 +229,7 @@ public static void ExternalInitAchievementsDelegates(
 }
 
 public static int ExternalGetNumAccessorySlots() {
-	return ModGeneric.extraSlots;
+	return Settings.GetInt("slots");
 }
 public static Item[] ExternalGetAccessorySlots() {
 	return ExternalGetAccessorySlotsFor(Main.myPlayer);

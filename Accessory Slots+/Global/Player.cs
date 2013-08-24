@@ -2,21 +2,22 @@ public static int[] MUSIC_BOXES = new int[]{-1,0,1,2,4,5,-1,6,7,9,8,11,10,12};
 public static Item[] accessories;
 
 public void Initialize() {
-	accessories = new Item[ModGeneric.extraSlots];
+	accessories = new Item[Settings.GetInt("slots")];
 	for (int i = 0; i < accessories.Length; i++) accessories[i] = new Item();
 }
 
 public void Save(BinaryWriter bw) {
+	int eslots = Settings.GetInt("slots");
 	if (Main.creatingChar) {
-		for (int i = 0; i < ModGeneric.extraSlots; i++) ModWorld.ItemSave(bw,new Item());
+		for (int i = 0; i < eslots; i++) ModWorld.ItemSave(bw,new Item());
 	} else {
-		for (int i = 0; i < ModGeneric.extraSlots; i++) ModWorld.ItemSave(bw,accessories[i]);
+		for (int i = 0; i < eslots; i++) ModWorld.ItemSave(bw,accessories[i]);
 	}
 }
 public void Load(BinaryReader br, int version) {
 	Initialize();
 	try {
-		for (int i = 0; i < ModGeneric.extraSlots; i++) accessories[i] = ModWorld.ItemLoad(br);
+		for (int i = 0; i < Settings.GetInt("slots"); i++) accessories[i] = ModWorld.ItemLoad(br);
 	} catch (Exception) {}
 }
 
@@ -44,7 +45,7 @@ public bool CheckAchievement(Player player) {
 	if (ModWorld.AcAchieve == null) return false;
 	
 	for (int i = 3; i <= 7; i++) if (ModWorld.IsBlankItem(player.armor[i])) return false;
-	for (int i = 0; i < ModGeneric.extraSlots; i++) if (ModWorld.IsBlankItem(accessories[i])) return false;
+	for (int i = 0; i < Settings.GetInt("slots"); i++) if (ModWorld.IsBlankItem(accessories[i])) return false;
 	ModWorld.AcAchieve("SHK_AS+_OVERKILL",null);
 	return true;
 }
@@ -53,7 +54,7 @@ public void UpdatePlayer(Player player) {
 	if (player == null || !player.active || player.name == "") return;
 	if (player.whoAmi == Main.myPlayer) CheckAchievement(player);
 	
-	for (int i = 0; i < ModGeneric.extraSlots; i++) {
+	for (int i = 0; i < Settings.GetInt("slots"); i++) {
 		Item acc = player.whoAmi == Main.myPlayer ? accessories[i] : ModWorld.accessories[player.whoAmi][i];
 		if (ModWorld.IsBlankItem(acc)) continue;
 		

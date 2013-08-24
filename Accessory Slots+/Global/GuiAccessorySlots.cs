@@ -3,25 +3,27 @@ public class GuiAccessorySlots : Interfaceable {
 	private static float swapScale;
 	
 	public bool PreDrawSlot(SpriteBatch sb, int slot) {
+		int eslots = Settings.GetInt("slots");
+		
 		if (slot == 0) {
 			swap = Main.inventoryBack5Texture;
 			swapScale = Main.inventoryScale;
-			for (int i = 0; i < ModGeneric.extraSlots; i++) ModWorld.gui.itemSlots[i] = ModPlayer.accessories[i];
+			for (int i = 0; i < eslots; i++) ModWorld.gui.itemSlots[i] = ModPlayer.accessories[i];
 		}
 		
-		if (slot != ModGeneric.extraSlots) ModWorld.gui.slotLocation[slot].X = Main.screenWidth-139-slot/3*48;
+		if (slot != eslots) ModWorld.gui.slotLocation[slot].X = Main.screenWidth-139-slot/3*48;
 		
-		Main.inventoryBack5Texture = slot == ModGeneric.extraSlots ? swap : Main.inventoryBack3Texture;
-		Main.inventoryScale = slot == ModGeneric.extraSlots ? swapScale : .85f;
+		Main.inventoryBack5Texture = slot == eslots ? swap : Main.inventoryBack3Texture;
+		Main.inventoryScale = slot == eslots ? swapScale : .85f;
 		
-		if (slot == ModGeneric.extraSlots) {
-			for (int i = 0; i < ModGeneric.extraSlots; i++) ModPlayer.accessories[i] = ModWorld.gui.itemSlots[i];
+		if (slot == eslots) {
+			for (int i = 0; i < eslots; i++) ModPlayer.accessories[i] = ModWorld.gui.itemSlots[i];
 		}
 		return true;
 	}
 	
 	public bool CanPlaceSlot(int slot, Item item) {
-		if (slot >= ModGeneric.extraSlots) return false;
+		if (slot >= Settings.GetInt("slots")) return false;
 		if (item == null || item.type == 0 || item.name == null || item.name == "" || item.stack <= 0) return true;
 		if (!item.accessory) return false;
 		if (item.RunMethod("CanEquip",Main.player[Main.myPlayer],-slot-1) && !(bool)Codable.customMethodReturn) return false;
