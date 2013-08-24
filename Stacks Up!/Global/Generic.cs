@@ -1,1 +1,0 @@
-public static int maxStackMultiplier = 1;
