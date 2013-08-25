@@ -1,5 +1,13 @@
 {
 	"settings": {
+		"enabled": {
+			"display": "Enabled",
+			"type": "bool",
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": true
+		},
 		"edge": {
 			"display": "Reserve edge of screen",
 			"type": "int",

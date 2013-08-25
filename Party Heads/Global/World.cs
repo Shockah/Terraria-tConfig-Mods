@@ -1,4 +1,6 @@
 public bool PreDrawPartyText(SpriteBatch sb) {
+	if (!Settings.GetBool("enabled")) return true;
+	
 	List<Object> party = ModPlayer.ExternalGetPartyInfo(Main.myPlayer);
 	if (party == null) return false;
 	Player p = Main.player[Main.myPlayer];
