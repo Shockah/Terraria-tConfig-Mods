@@ -97,7 +97,7 @@ public static void NetReceive(int messageType, BinaryReader br) {
 	}
 }
 
-public static void UpdateWorld() {
+public void UpdateWorld() {
 	switch (Main.netMode) {
 		case MODE_SOLO: {
 			if (oldSpawnMeteor) {

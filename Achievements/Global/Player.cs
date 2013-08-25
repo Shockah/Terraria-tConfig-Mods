@@ -32,8 +32,8 @@ public static void Initialize() {
 	ModWorld.oldInvasionType = 0;
 	
 	if (Main.dedServ) {
-		Codable.RunGlobalMethod("ModWorld","ExternalInitAchievements",new object[]{});
-		Codable.RunGlobalMethod("ModWorld","ExternalInitAchievementsDelegates",new object[]{
+		Codable.RunGlobalMethod("ModWorld","ExternalInitAchievements");
+		Codable.RunGlobalMethod("ModWorld","ExternalInitAchievementsDelegates",
 			(Action<string,string,string,string,string,int,Texture2D,bool>)ExternalAddAchievement,
 			(Action<string[],int>)ExternalConfigAchievementNetMode,
 			(Action<string[],int>)ExternalConfigAchievementDifficulty,
@@ -49,10 +49,10 @@ public static void Initialize() {
 			(Action<int,string,object>)ExternalAchievementProgressPlayer,
 			(Action<string,object>)ExternalAchievementProgressAllPlayers,
 			(Func<string,object[]>)ExternalGetAchievementInfo
-		});
+		);
 	} else {
-		Codable.RunGlobalMethod("ModPlayer","ExternalInitAchievements",new object[]{});
-		Codable.RunGlobalMethod("ModPlayer","ExternalInitAchievementsDelegates",new object[]{
+		Codable.RunGlobalMethod("ModPlayer","ExternalInitAchievements");
+		Codable.RunGlobalMethod("ModPlayer","ExternalInitAchievementsDelegates",
 			(Action<string,string,string,string,string,int,Texture2D,bool>)ExternalAddAchievement,
 			(Action<string[],int>)ExternalConfigAchievementNetMode,
 			(Action<string[],int>)ExternalConfigAchievementDifficulty,
@@ -68,7 +68,7 @@ public static void Initialize() {
 			(Action<int,string,object>)ExternalAchievementProgressPlayer,
 			(Action<string,object>)ExternalAchievementProgressAllPlayers,
 			(Func<string,object[]>)ExternalGetAchievementInfo
-		});
+		);
 	}
 }
 public void CreatePlayer(Player p) {
