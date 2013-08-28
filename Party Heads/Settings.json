@@ -8,6 +8,14 @@
 			"displayFalse": "No",
 			"default": true
 		},
+		"combine": {
+			"display": "Separate heads if they're too close (experimental)",
+			"type": "bool",
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": false
+		},
 		"edge": {
 			"display": "Reserve edge of screen",
 			"type": "int",
@@ -39,6 +47,50 @@
 			"rangeMin": 100,
 			"rangeMax": 2400,
 			"default": 800
+		},
+		"textStyle": {
+			"display": "Text style",
+			"type": "choice",
+			
+			"choices": [
+				{
+					"value": "off",
+					"display": "Disabled"
+				},
+				{
+					"value": "rotating",
+					"display": "Rotating"
+				},
+				{
+					"value": "static",
+					"display": "Static"
+				}
+			],
+			"default": "rotating"
+		},
+		"textDisplayName": {
+			"display": "Text: Display name",
+			"type": "bool",
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": true
+		},
+		"textDisplayHP": {
+			"display": "Text: Display health",
+			"type": "bool",
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": false
+		},
+		"textColorHP": {
+			"display": "Text: Color based on health",
+			"type": "bool",
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": true
 		}
 	}
 }
