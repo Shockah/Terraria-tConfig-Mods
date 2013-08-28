@@ -1,0 +1,31 @@
+{
+	"settings": {
+		"positive": {
+			"display": "Shake off buffs",
+			"type": "bool",
+			"serverSynced": true,
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": true
+		},
+		"negative": {
+			"display": "Shake off debuffs",
+			"type": "bool",
+			"serverSynced": true,
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": true
+		},
+		"extendBuff": {
+			"display": "Extend buff duration if it can be shaked off",
+			"type": "bool",
+			"serverSynced": true,
+			
+			"displayTrue": "Yes",
+			"displayFalse": "No",
+			"default": false
+		}
+	}
+}
