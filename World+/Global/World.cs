@@ -187,7 +187,7 @@ public void UpdateWorld() {
 		listCorruptflies = GetAllOfExactType(typeof(EffectFireflyCorrupt));
 	
 	foreach (Player player in players) {
-		if (player.zone["Overworld"] && !player.zone["Hallow"] && !player.zone["Corruption"] && !player.zone["Jungle"] && !Main.dayTime && listFlies.Count < EffectFireflyStandard.GetMaxCount(players) && Main.rand.Next(200) == 0) {
+		if (player.zone["Overworld"] && !player.zone["Hallow"] && !player.zone["Corruption"] && !player.zone["Jungle"] && !player.zone["Snow"] && !Main.dayTime && listFlies.Count < EffectFireflyStandard.GetMaxCount(players) && Main.rand.Next(200) == 0) {
 			EffectFirefly ef = new EffectFireflyStandard(new Random(rand.Next()));
 			for (int tries = 0; tries < 50; tries++) {
 				Vector2 v = new Vector2(player.position.X-screenW/2+rand.Next(screenW),0);

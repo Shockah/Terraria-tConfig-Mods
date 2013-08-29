@@ -13,7 +13,7 @@
 		return ret;
 	}
 	protected static bool DoesFulfillSpawnConditions(Player player) {
-		return player.zone["Overworld"] && !player.zone["Hallow"] && !player.zone["Corruption"] && !player.zone["Jungle"];
+		return player.zone["Overworld"] && !player.zone["Hallow"] && !player.zone["Corruption"] && !player.zone["Jungle"] && !player.zone["Snow"];
 	}
 	
 	protected Vector2 moved = new Vector2();
