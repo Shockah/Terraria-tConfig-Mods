@@ -4,6 +4,7 @@
 #INCLUDE "EffectPositionable.cs"
 #INCLUDE "EffectFirefly.cs"
 #INCLUDE "EffectFireflyHover.cs"
+#INCLUDE "EffectFireflyStandard.cs"
 #INCLUDE "EffectFireflyRainbow.cs"
 #INCLUDE "EffectFireflyFlame.cs"
 #INCLUDE "EffectFireflyTargets.cs"
@@ -78,6 +79,7 @@ public static void ExternalInitAchievementsDelegates(
 	string s, cat;
 	
 	cat = "Fireflies";
+	s = "SHK_WORLDP_FLY_STANDARD"; AddAchievement(s,cat,"Firefly","Catch a Firefly.",null,10,RetrieveItemTex("Firefly in a Jar"),false);
 	s = "SHK_WORLDP_FLY_CORRUPT"; AddAchievement(s,cat,"Corrupt Firefly","Catch a Corrupt Firefly.",null,10,RetrieveItemTex("Firefly in a Jar"),false);
 	s = "SHK_WORLDP_FLY_CORRUPT2"; AddAchievement(s,cat,"Chaos Firefly","Catch a Chaos Firefly.","SHK_WORLDP_FLY_CORRUPT",15,RetrieveItemTex("Firefly in a Jar"),true);
 	s = "SHK_WORLDP_FLY_MOON"; AddAchievement(s,cat,"Moon Firefly","Catch a Moon Firefly.",null,10,RetrieveItemTex("Firefly in a Jar"),false);
@@ -178,12 +180,25 @@ public void UpdateWorld() {
 	
 	const int screenW = 1920, screenH = 1080;
 	List<Effect>
+		listFlies = GetAllOfExactType(typeof(EffectFireflyStandard)),
 		listRainbowflies = GetAllOfExactType(typeof(EffectFireflyRainbow)),
 		listHellflies = GetAllOfExactType(typeof(EffectFireflyFlame)),
 		listJungleflies = GetAllOfExactType(typeof(EffectFireflyMoon)),
 		listCorruptflies = GetAllOfExactType(typeof(EffectFireflyCorrupt));
 	
 	foreach (Player player in players) {
+		if (player.zone["Overworld"] && !player.zone["Hallow"] && !player.zone["Corruption"] && !player.zone["Jungle"] && !Main.dayTime && listFlies.Count < EffectFireflyStandard.GetMaxCount(players) && Main.rand.Next(200) == 0) {
+			EffectFirefly ef = new EffectFireflyStandard(new Random(rand.Next()));
+			for (int tries = 0; tries < 50; tries++) {
+				Vector2 v = new Vector2(player.position.X-screenW/2+rand.Next(screenW),0);
+				if (!ef.IsTileSolid((int)(v.X/16),(int)(v.Y/16))) {
+					ef.Create(v);
+					ef.Spawn();
+					break;
+				}
+			}
+		}
+		
 		if (player.zone["Hallow"] && !Main.dayTime && listRainbowflies.Count < EffectFireflyRainbow.GetMaxCount(players) && Main.rand.Next(100) == 0) {
 			EffectFirefly ef = new EffectFireflyRainbow(new Random(rand.Next()));
 			for (int tries = 0; tries < 50; tries++) {

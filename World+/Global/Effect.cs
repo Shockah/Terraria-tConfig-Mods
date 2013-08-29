@@ -1,6 +1,6 @@
 [Serializable] public class Effect : IEquatable<Effect> {
 	public static int nextId = 0;
-	public readonly static Texture2D ptFuzzy, ptSquare, ptStar, ptRing;
+	public readonly static Texture2D ptFuzzy, ptSquare, ptStar, ptRing, ptSpiralStar;
 	public readonly static BlendState
 		bsSubtract = new BlendState{
 			ColorSourceBlend = Blend.SourceAlpha,
@@ -17,6 +17,7 @@
 		ptSquare = Main.goreTexture[Config.goreID["ParticleSquare"]];
 		ptStar = Main.goreTexture[Config.goreID["ParticleStar"]];
 		ptRing = Main.goreTexture[Config.goreID["ParticleRing"]];
+		ptSpiralStar = Main.goreTexture[Config.goreID["ParticleSpiralStar"]];
 	}
 	
 	public static Rectangle? GetTexRectangle(Texture2D tex) {return new Rectangle?(new Rectangle(0,0,tex.Width,tex.Height));}
@@ -38,6 +39,10 @@
 	public static Rectangle? GetRectRing() {return GetTexRectangle(ptRing);}
 	public static Vector2 GetCenterRing() {return GetTexCenter(ptRing);}
 	public static float GetScaleRing(float px) {return GetTexScale(ptRing,px);}
+	
+	public static Rectangle? GetRectSpiralStar() {return GetTexRectangle(ptSpiralStar);}
+	public static Vector2 GetCenterSpiralStar() {return GetTexCenter(ptSpiralStar);}
+	public static float GetScaleSpiralStar(float px) {return GetTexScale(ptSpiralStar,px);}
 	
 	public static float LdirX(double dist, double angle) {return (float)(-Math.Cos((angle+180)*Math.PI/180f)*dist);}
 	public static float LdirY(double dist, double angle) {return (float)(Math.Sin((angle+180)*Math.PI/180f)*dist);}

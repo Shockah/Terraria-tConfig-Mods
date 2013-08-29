@@ -145,9 +145,12 @@
 		name = (chaos ? "Chaos" : "Corrupt")+" "+name;
 	}
 	public override void RefreshItemValue(ref int value, ref int rare) {
+		rare++;
+		value *= 2;
+		
 		if (chaos) {
-			rare += 2;
-			value *= 20;
+			rare++;
+			value *= 10;
 		}
 		
 		base.RefreshItemValue(ref value,ref rare);

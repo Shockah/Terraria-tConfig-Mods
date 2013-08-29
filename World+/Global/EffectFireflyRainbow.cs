@@ -16,7 +16,8 @@
 		return player.zone["Hallow"];
 	}
 	
-	protected float hue, hueSpeed;
+	protected bool flipped;
+	protected float hue, hueSpeed, rot1, rotSpeed1;
 	protected List<float> rainbowHue = new List<float>();
 	protected List<float> rainbowSize = new List<float>();
 	protected List<Vector2> rainbowPos = new List<Vector2>();
@@ -28,17 +29,29 @@
 		speed = (float)Math.Sqrt(speed/1.5f+2f);
 		hue = (float)(rand.NextDouble()*360d);
 		hueSpeed = rand.Next(Settings.GetInt("rarity")) == 0 ? (float)((1d+rand.NextDouble()*9d)*rand.Next(2) == 1 ? 1 : -1) : 0;
+		
+		rot1 = (float)(rand.NextDouble()*360d);
+		rotSpeed1 = (float)((4d+rand.NextDouble()*6d)*rand.Next(2) == 1 ? 1 : -1);
+		flipped = rand.Next(2) == 1;
 	}
 	
 	public override void Save(BinaryWriter bw) {
 		base.Save(bw);
 		bw.Write(hue);
 		bw.Write(hueSpeed);
+		
+		bw.Write(rot1);
+		bw.Write(rotSpeed1);
+		bw.Write(flipped);
 	}
 	public override void Load(BinaryReader br) {
 		base.Load(br);
 		hue = br.ReadSingle();
 		hueSpeed = br.ReadSingle();
+		
+		rot1 = br.ReadSingle();
+		rotSpeed1 = br.ReadSingle();
+		flipped = br.ReadBoolean();
 	}
 	
 	protected override void OnCreate() {
@@ -81,6 +94,10 @@
 		if (hue >= 360) hue -= 360;
 		if (hue < 0) hue += 360;
 		
+		rot1 += rotSpeed1;
+		if (rot1 >= 360) rot1 -= 360;
+		if (rot1 < 0) rot1 += 360;
+		
 		if (IsActive() && rand.Next((int)(50-speed*10)) == 0) {
 			int r,g,b;
 			HsvToRgb(hue,1f,1f,out r,out g,out b);
@@ -119,7 +136,7 @@
 		
 		float sizeAmp = hueSpeed != 0 && !IsActive() ? 1.5f : 1f;
 		sb.Draw(ptFuzzy,pos-Main.screenPosition,GetRectFuzzy(),new Color(c.R,c.G,c.B,(byte)(c.A/2f)),0f,GetCenterFuzzy(),GetScaleFuzzy(size*sizeAmp),SpriteEffects.None,0f);
-		sb.Draw(ptFuzzy,pos-Main.screenPosition,GetRectFuzzy(),c,0f,GetCenterFuzzy(),GetScaleFuzzy(size*sizeAmp/2f),SpriteEffects.None,0f);
+		sb.Draw(ptSpiralStar,pos-Main.screenPosition,GetRectSpiralStar(),c,(float)(rot1*Math.PI/180f),GetCenterSpiralStar(),GetScaleSpiralStar(size*sizeAmp/1.5f),dir*(flipped ? -1 : 1) == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,0f);
 		float lightAmp = hueSpeed != 0 && !IsActive() ? 2f : 1f;
 		if (addLight) Lighting.addLight((int)Math.Round(pos.X/16f),(int)Math.Round(pos.Y/16f),c.R/255f*size/32f*c.A/255f*lightAmp,c.G/255f*size/32f*c.A/255f*lightAmp,c.B/255f*size/32f*c.A/255f*lightAmp);
 	}
@@ -150,11 +167,11 @@
 		name = GetColorName()+" "+name;
 	}
 	public override void RefreshItemValue(ref int value, ref int rare) {
-		rare += 2;
+		rare += 3;
 		value *= 20;
 		
 		if (hueSpeed != 0) {
-			rare += 2;
+			rare++;
 			value *= 10;
 		}
 		

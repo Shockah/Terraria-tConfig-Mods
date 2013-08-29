@@ -12,6 +12,7 @@ public class TileFireflyHandler {
 		RegisterFireflyType(typeof(EffectFireflyFlame),i++);
 		RegisterFireflyType(typeof(EffectFireflyMoon),i++);
 		RegisterFireflyType(typeof(EffectFireflyCorrupt),i++);
+		RegisterFireflyType(typeof(EffectFireflyStandard),i++);
 	}
 	
 	private void RegisterFireflyType(Type type, int id) {

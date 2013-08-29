@@ -148,11 +148,11 @@
 		name = (color1.G == 255 ? "Cursed " : "")+"Flame "+name;
 	}
 	public override void RefreshItemValue(ref int value, ref int rare) {
-		rare += 1;
-		value *= 5;
+		rare += 2;
+		value *= 7;
 		
 		if (color1.G == 255) {
-			rare += 2;
+			rare++;
 			value *= 10;
 		}
 		

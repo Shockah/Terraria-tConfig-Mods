@@ -105,10 +105,11 @@
 		name = (hasRing ? "Lively ": "")+"Moon "+name;
 	}
 	public override void RefreshItemValue(ref int value, ref int rare) {
-		value *= 2;
+		rare++;
+		value *= 4;
 		
 		if (hasRing) {
-			rare += 2;
+			rare++;
 			value *= 10;
 		}
 		
